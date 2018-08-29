@@ -1,4 +1,4 @@
-package net.skhu.mentoring.main;
+package net.skhu.mentoring;
 
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
