@@ -1,4 +1,4 @@
-package net.skhu.mentoring.main;
+package net.skhu.mentoring;
 
 import org.springframework.boot.builder.SpringApplicationBuilder;
 import org.springframework.boot.web.servlet.support.SpringBootServletInitializer;
