@@ -1,5 +1,6 @@
 package net.skhu.mentoring.domain;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
@@ -30,6 +31,9 @@ public abstract class Account {
     private Long id;
 
     @Column(nullable = false)
+    private String type;
+
+    @Column(nullable = false)
     @Enumerated(value = EnumType.STRING)
     private Gender gender;
 
@@ -39,6 +43,7 @@ public abstract class Account {
     @Column(nullable = false, unique = true)
     private String identity;
 
+    @JsonIgnore
     @Column(nullable = false)
     private String password;
 

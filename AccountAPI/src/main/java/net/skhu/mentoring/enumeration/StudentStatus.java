@@ -1,5 +1,5 @@
 package net.skhu.mentoring.enumeration;
 
-public enum StudentType {
+public enum StudentStatus {
     NORMAL, MENTO, MENTI
 }
