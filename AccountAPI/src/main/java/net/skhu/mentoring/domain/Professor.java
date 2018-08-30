@@ -9,15 +9,16 @@ import net.skhu.mentoring.enumeration.UserType;
 import javax.persistence.Column;
 import javax.persistence.DiscriminatorValue;
 import javax.persistence.Entity;
-import javax.persistence.FetchType;
-import javax.persistence.OneToMany;
+import javax.persistence.JoinColumn;
+import javax.persistence.JoinTable;
+import javax.persistence.ManyToMany;
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
 
 @Data
-@EqualsAndHashCode(callSuper = true, exclude = {"departmentRelations"})
-@ToString(exclude = {"departmentRelations"})
+@EqualsAndHashCode(callSuper = true, exclude = {"subDepartments"})
+@ToString(exclude = {"subDepartments"})
 @Entity
 @DiscriminatorValue(UserType.PROFESSOR)
 public class Professor extends Account implements Serializable {
@@ -27,12 +28,12 @@ public class Professor extends Account implements Serializable {
         super();
     }
 
-    public Professor(Long id, String type, Gender gender, String name, String identity, String password, String phone, String email, String officePhone, String officePlace, Boolean hasChairman){
-        super(id, type, gender, name, identity, password, phone, email);
+    public Professor(Long id, String type, Gender gender, Department department, String name, String identity, String password, String phone, String email, String officePhone, String officePlace, Boolean hasChairman){
+        super(id, type, gender, department, name, identity, password, phone, email);
         this.officePhone = officePhone;
         this.officePlace = officePlace;
         this.hasChairman = hasChairman;
-        this.departmentRelations = new ArrayList<DepartmentRelation>();
+        this.subDepartments = new ArrayList<Department>();
     }
 
     @Column(nullable = false)
@@ -44,6 +45,7 @@ public class Professor extends Account implements Serializable {
     @Column(nullable = false)
     private Boolean hasChairman;
 
-    @OneToMany(mappedBy = "account", fetch = FetchType.LAZY)
-    private List<DepartmentRelation> departmentRelations;
+    @ManyToMany
+    @JoinTable(name="multimajor", joinColumns=@JoinColumn(name="accountId"), inverseJoinColumns=@JoinColumn(name="departmentId"))
+    private List<Department> subDepartments;
 }

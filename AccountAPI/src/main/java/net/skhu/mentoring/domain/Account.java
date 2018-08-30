@@ -17,6 +17,8 @@ import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.Inheritance;
 import javax.persistence.InheritanceType;
+import javax.persistence.JoinColumn;
+import javax.persistence.ManyToOne;
 
 @Data
 @NoArgsConstructor
@@ -36,6 +38,10 @@ public abstract class Account {
     @Column(nullable = false)
     @Enumerated(value = EnumType.STRING)
     private Gender gender;
+
+    @ManyToOne
+    @JoinColumn(name = "departmentId")
+    private Department department;
 
     @Column(nullable = false)
     private String name;
