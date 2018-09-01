@@ -15,6 +15,7 @@ import javax.persistence.Enumerated;
 import javax.persistence.JoinColumn;
 import javax.persistence.JoinTable;
 import javax.persistence.ManyToMany;
+import javax.persistence.Table;
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
@@ -23,6 +24,7 @@ import java.util.List;
 @EqualsAndHashCode(callSuper = true, exclude = {"subDepartments"})
 @ToString(exclude = {"subDepartments"})
 @Entity
+@Table(name = "student")
 @DiscriminatorValue(UserType.STUDENT)
 public class Student extends Account implements Serializable {
     private static final long serialVersionUID = 1L;
@@ -31,12 +33,17 @@ public class Student extends Account implements Serializable {
         super();
     }
 
-    public Student(Long id, String type, Gender gender, Department department, String name, String identity, String password, String phone, String email, Integer grade, StudentStatus status, Boolean hasChairman){
+    public Student(Long id, String type, String gender, Department department, String name, String identity, String password, String phone, String email, Integer grade, StudentStatus status, Boolean hasChairman){
         super(id, type, gender, department, name, identity, password, phone, email);
         this.grade = grade;
         this.status = status;
         this.hasChairman = hasChairman;
-        this.subDepartments = new ArrayList<Department>();
+        this.multiDepartments = new ArrayList<Department>();
+    }
+
+    public Student(Long id, String type, String gender, Department department, String name, String identity, String password, String phone, String email, Integer grade, StudentStatus status, Boolean hasChairman, List<Department> multiDepartments){
+        this(id, type, gender, department, name, identity, password, phone, email, grade, status, hasChairman);
+        this.multiDepartments = multiDepartments;
     }
 
     @Column(nullable = false)
@@ -51,5 +58,5 @@ public class Student extends Account implements Serializable {
 
     @ManyToMany
     @JoinTable(name="multimajor", joinColumns=@JoinColumn(name="accountId"), inverseJoinColumns=@JoinColumn(name="departmentId"))
-    private List<Department> subDepartments;
+    private List<Department> multiDepartments;
 }

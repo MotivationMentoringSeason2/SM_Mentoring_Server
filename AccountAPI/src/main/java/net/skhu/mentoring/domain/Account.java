@@ -32,12 +32,11 @@ public abstract class Account {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @Column(nullable = false)
+    @Column(nullable = false, insertable = false, updatable = false)
     private String type;
 
     @Column(nullable = false)
-    @Enumerated(value = EnumType.STRING)
-    private Gender gender;
+    private String gender;
 
     @ManyToOne
     @JoinColumn(name = "departmentId")

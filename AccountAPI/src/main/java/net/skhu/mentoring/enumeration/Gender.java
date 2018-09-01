@@ -1,5 +1,6 @@
 package net.skhu.mentoring.enumeration;
 
-public enum Gender {
-    MALE, FEMALE
+public interface Gender {
+    String MALE = "MALE";
+    String FEMALE = "FEMALE";
 }

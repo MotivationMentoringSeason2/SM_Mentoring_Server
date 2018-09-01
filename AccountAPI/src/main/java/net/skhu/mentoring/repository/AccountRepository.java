@@ -8,4 +8,5 @@ import java.util.Optional;
 @Repository
 public interface AccountRepository extends AccountBaseRepository<Account> {
     Optional<Account> findByIdentity(String identity);
+    boolean existsByIdentity(String identity);
 }
