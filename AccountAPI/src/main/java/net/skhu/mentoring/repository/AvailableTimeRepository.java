@@ -5,9 +5,9 @@ import net.skhu.mentoring.domain.AvailableTime;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 
-import java.util.Optional;
+import java.util.List;
 
 @Repository
 public interface AvailableTimeRepository extends JpaRepository<AvailableTime, Long> {
-    Optional<AvailableTime> findByAccount(Account account);
+    List<AvailableTime> findByAccount(Account account);
 }
