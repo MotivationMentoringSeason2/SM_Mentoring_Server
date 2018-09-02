@@ -22,6 +22,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 
+import javax.transaction.Transactional;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -48,6 +49,7 @@ public class GuestServiceImpl implements GuestService {
     }
 
     @Override
+    @Transactional
     public ResponseEntity<String> studentSignMessage(StudentSignModel studentSignModel) {
         Department department;
         List<Department> multiDepartments;
@@ -78,6 +80,7 @@ public class GuestServiceImpl implements GuestService {
     }
 
     @Override
+    @Transactional
     public ResponseEntity<String> professorSignMessage(ProfessorSignModel professorSignModel) {
         Department department;
         List<Department> multiDepartments;
@@ -107,6 +110,7 @@ public class GuestServiceImpl implements GuestService {
     }
 
     @Override
+    @Transactional
     public ResponseEntity<String> employeeSignMessage(EmployeeSignModel employeeSignModel) {
         List<Department> departments;
 
