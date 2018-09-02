@@ -4,7 +4,6 @@ import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 import net.skhu.mentoring.domain.Student;
-import net.skhu.mentoring.enumeration.Gender;
 
 import java.util.List;
 import java.util.stream.Collectors;
