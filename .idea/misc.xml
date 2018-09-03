@@ -1,13 +1,15 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project version="4">
   <component name="FrameworkDetectionExcludesConfiguration">
-    <file type="web" url="file://$PROJECT_DIR$/AccountAPI" />
+    <file type="web" url="file://$PROJECT_DIR$" />
     <file type="web" url="file://$PROJECT_DIR$/main" />
   </component>
   <component name="MavenProjectsManager">
     <option name="originalFiles">
       <list>
         <option value="$PROJECT_DIR$/AccountAPI/pom.xml" />
+        <option value="$PROJECT_DIR$/MentoAPI/pom.xml" />
+        <option value="$PROJECT_DIR$/NoticeAPI/pom.xml" />
       </list>
     </option>
   </component>
