@@ -22,7 +22,7 @@ public class EmployeeSignModel {
     private String officePlace;
     private List<Long> departments;
 
-    public static EmployeeSignModel builtToUpdateModel(Employee employee){
+    public static EmployeeSignModel builtToUpdateModel(Employee employee) {
         return new EmployeeSignModel(employee.getIdentity(), "", employee.getGender(), employee.getName(), employee.getPhone(), employee.getEmail(), employee.getOfficePhone(), employee.getOfficePlace(), employee.getDepartments().stream().map(department -> department.getId()).collect(Collectors.toList()));
     }
 }

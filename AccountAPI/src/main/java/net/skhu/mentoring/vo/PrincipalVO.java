@@ -15,19 +15,20 @@ import java.time.LocalDateTime;
 public class PrincipalVO {
     private String identity;
     private String name;
-    private String userType;
+    private String type;
     private String studentStatus;
     private LocalDateTime loginTime;
 
-    public static PrincipalVO builtToVOWithProfessor(Professor professor, LocalDateTime loginTime){
+    public static PrincipalVO builtToVOWithProfessor(Professor professor, LocalDateTime loginTime) {
         return new PrincipalVO(professor.getIdentity(), professor.getName(), professor.getType(), "NONE", loginTime);
     }
 
-    public static PrincipalVO builtToVOWithStudent(Student student, LocalDateTime loginTime){
-        return new PrincipalVO(student.getIdentity(), student.getName(), student.getType(), student.getStatus().name(), loginTime);
+    public static PrincipalVO builtToVOWithStudent(Student student, LocalDateTime loginTime) {
+        String studentStatus = student.getHasChairman() ? String.format("CHAIRMAN_%s", student.getStatus().name()) : student.getStatus().name();
+        return new PrincipalVO(student.getIdentity(), student.getName(), student.getType(), studentStatus, loginTime);
     }
 
-    public static PrincipalVO builtToVOWithEmployee(Employee employee, LocalDateTime loginTime){
+    public static PrincipalVO builtToVOWithEmployee(Employee employee, LocalDateTime loginTime) {
         return new PrincipalVO(employee.getIdentity(), employee.getName(), employee.getType(), "NONE", loginTime);
     }
 }

@@ -49,8 +49,8 @@ public class JwtTokenProvider {
         Claims claims = Jwts.claims().setSubject(username);
         claims.put("role", grantedAuthorities);
         claims.put("name", principalVO.getName());
-        claims.put("userType", principalVO.getUserType());
-        if(!principalVO.getStudentStatus().equals("NONE"))
+        claims.put("type", principalVO.getType());
+        if (!principalVO.getStudentStatus().equals("NONE"))
             claims.put("studentStatus", principalVO.getStudentStatus());
 
         Date now = new Date();
@@ -64,7 +64,7 @@ public class JwtTokenProvider {
                 .compact();
     }
 
-    public Authentication getAuthentication(String token){
+    public Authentication getAuthentication(String token) {
         UserDetails userDetails = myUserDetailsService.loadUserByUsername(this.getUsername(token));
         return new UsernamePasswordAuthenticationToken(userDetails, "", userDetails.getAuthorities());
     }
@@ -90,7 +90,7 @@ public class JwtTokenProvider {
             Jwts.parser().setSigningKey(secretKey).parseClaimsJws(token);
             return true;
         } catch (JwtException | IllegalArgumentException e) {
-            throw new CustomException("Expired or invalid JWT token", HttpStatus.NO_CONTENT);
+            throw new CustomException("유효하지 않은 토큰입니다. 다시 시도 바랍니다.", HttpStatus.NON_AUTHORITATIVE_INFORMATION);
         }
     }
 }

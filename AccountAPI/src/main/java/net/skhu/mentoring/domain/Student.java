@@ -21,19 +21,19 @@ import java.util.ArrayList;
 import java.util.List;
 
 @Data
-@EqualsAndHashCode(callSuper = true, exclude = {"subDepartments"})
-@ToString(exclude = {"subDepartments"})
+@EqualsAndHashCode(callSuper = true, exclude = {"multiDepartments"})
+@ToString(exclude = {"multiDepartments"})
 @Entity
 @Table(name = "student")
 @DiscriminatorValue(UserType.STUDENT)
 public class Student extends Account implements Serializable {
     private static final long serialVersionUID = 1L;
 
-    public Student(){
+    public Student() {
         super();
     }
 
-    public Student(Long id, String type, String gender, Department department, String name, String identity, String password, String phone, String email, Integer grade, StudentStatus status, Boolean hasChairman){
+    public Student(Long id, String type, String gender, Department department, String name, String identity, String password, String phone, String email, Integer grade, StudentStatus status, Boolean hasChairman) {
         super(id, type, gender, department, name, identity, password, phone, email);
         this.grade = grade;
         this.status = status;
@@ -41,7 +41,7 @@ public class Student extends Account implements Serializable {
         this.multiDepartments = new ArrayList<Department>();
     }
 
-    public Student(Long id, String type, String gender, Department department, String name, String identity, String password, String phone, String email, Integer grade, StudentStatus status, Boolean hasChairman, List<Department> multiDepartments){
+    public Student(Long id, String type, String gender, Department department, String name, String identity, String password, String phone, String email, Integer grade, StudentStatus status, Boolean hasChairman, List<Department> multiDepartments) {
         this(id, type, gender, department, name, identity, password, phone, email, grade, status, hasChairman);
         this.multiDepartments = multiDepartments;
     }
@@ -57,6 +57,6 @@ public class Student extends Account implements Serializable {
     private Boolean hasChairman;
 
     @ManyToMany
-    @JoinTable(name="multimajor", joinColumns=@JoinColumn(name="accountId"), inverseJoinColumns=@JoinColumn(name="departmentId"))
+    @JoinTable(name = "multimajor", joinColumns = @JoinColumn(name = "accountId"), inverseJoinColumns = @JoinColumn(name = "departmentId"))
     private List<Department> multiDepartments;
 }

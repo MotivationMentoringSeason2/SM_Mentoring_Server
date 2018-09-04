@@ -18,16 +18,16 @@ public class ProviderLoginServiceImpl implements ProviderLoginService {
 
     @Override
     public Account provideLogin(final String identity, final String password) {
-        if(identity == null || identity.isEmpty())
-            throw new CustomException("ID의 값을 입력하지 않았습니다.", HttpStatus.NO_CONTENT);
+        if (identity == null || identity.isEmpty())
+            throw new CustomException("ID의 값을 입력하지 않았습니다.", HttpStatus.NON_AUTHORITATIVE_INFORMATION);
         Optional<Account> account = accountRepository.findByIdentity(identity);
-        if(!account.isPresent())
-            throw new CustomException("존재하지 않는 사용자의 ID를 입력하였습니다.", HttpStatus.NO_CONTENT);
+        if (!account.isPresent())
+            throw new CustomException("존재하지 않는 사용자의 ID를 입력하였습니다.", HttpStatus.NON_AUTHORITATIVE_INFORMATION);
         else {
             String encryptPassword = Encryption.encrypt(password, Encryption.MD5);
             Account tmpAccount = account.get();
-            if(!tmpAccount.getPassword().equals(encryptPassword))
-                throw new CustomException("사용자의 비밀번호가 일치하지 않습니다.", HttpStatus.NO_CONTENT);
+            if (!tmpAccount.getPassword().equals(encryptPassword))
+                throw new CustomException("사용자의 비밀번호가 일치하지 않습니다.", HttpStatus.NON_AUTHORITATIVE_INFORMATION);
             else
                 return tmpAccount;
         }

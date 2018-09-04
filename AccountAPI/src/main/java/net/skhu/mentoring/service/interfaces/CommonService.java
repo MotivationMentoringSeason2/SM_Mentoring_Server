@@ -4,17 +4,20 @@ import net.skhu.mentoring.model.AvailableTimeModel;
 import net.skhu.mentoring.model.EmployeeSignModel;
 import net.skhu.mentoring.model.ProfessorSignModel;
 import net.skhu.mentoring.model.StudentSignModel;
+import net.skhu.mentoring.vo.PrincipalVO;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.multipart.MultipartFile;
 
+import javax.servlet.http.HttpServletRequest;
 import java.io.IOException;
 import java.security.Principal;
 import java.util.List;
 
 public interface CommonService {
-    StudentSignModel fetchCurrentStudentInfo(final Principal principal);
-    ProfessorSignModel fetchCurrentProfessorInfo(final Principal principal);
-    EmployeeSignModel fetchCurrentEmployeeInfo(final Principal principal);
-    ResponseEntity<String> executeSavingMyAvailableTime(final Principal principal, final List<AvailableTimeModel> timetable);
-    ResponseEntity<String> executeProfileUploading(final MultipartFile file, final Principal principal) throws IOException;
+    PrincipalVO fetchCurrentPrincipal(final Principal principal, final HttpServletRequest request);
+    StudentSignModel fetchCurrentStudentInfo(final Principal principal, final HttpServletRequest request);
+    ProfessorSignModel fetchCurrentProfessorInfo(final Principal principal, final HttpServletRequest request);
+    EmployeeSignModel fetchCurrentEmployeeInfo(final Principal principal, final HttpServletRequest request);
+    ResponseEntity<String> executeSavingMyAvailableTime(final Principal principal, final HttpServletRequest request, final List<AvailableTimeModel> timetable);
+    ResponseEntity<String> executeProfileUploading(final MultipartFile file, final Principal principal, final HttpServletRequest request) throws IOException;
 }

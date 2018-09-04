@@ -22,7 +22,7 @@ public class StudentSignModel {
     private int grade;
     private List<Long> multiDepartments;
 
-    public static StudentSignModel builtToUpdateModel(Student student){
+    public static StudentSignModel builtToUpdateModel(Student student) {
         return new StudentSignModel(student.getIdentity(), "", student.getGender(), student.getDepartment() != null ? student.getDepartment().getId() : -1, student.getName(), student.getPhone(), student.getEmail(), student.getGrade(), student.getMultiDepartments().stream().map(department -> department.getId()).collect(Collectors.toList()));
     }
 }

@@ -18,23 +18,23 @@ import org.springframework.web.bind.annotation.RestController;
 import java.util.List;
 
 @RestController
-@CrossOrigin
+@CrossOrigin(origins = "http://localhost:3000")
 @RequestMapping("/AccountAPI/resource")
 public class ResourceRestController {
     @Autowired
     private ResourceService resourceService;
 
-    private HttpHeaders generateImageHeader(Profile profile){
+    private HttpHeaders generateImageHeader(Profile profile) {
         HttpHeaders header = new HttpHeaders();
-        switch(profile.getFileSuffix()) {
-            case JPG :
-            case JPEG :
+        switch (profile.getFileSuffix()) {
+            case JPG:
+            case JPEG:
                 header.setContentType(MediaType.IMAGE_JPEG);
                 break;
-            case PNG :
+            case PNG:
                 header.setContentType(MediaType.IMAGE_PNG);
                 break;
-            case GIF :
+            case GIF:
                 header.setContentType(MediaType.IMAGE_GIF);
                 break;
         }
@@ -42,30 +42,30 @@ public class ResourceRestController {
     }
 
     @GetMapping("exist_account/{identity}")
-    public ResponseEntity<Boolean> fetchExistAccount(@PathVariable String identity){
+    public ResponseEntity<Boolean> fetchExistAccount(@PathVariable String identity) {
         return ResponseEntity.ok(resourceService.fetchExistAccount(identity));
     }
 
     @GetMapping("departments")
-    public ResponseEntity<?> fetchAllDepartments(){
+    public ResponseEntity<?> fetchAllDepartments() {
         List<Department> departments = resourceService.fetchAllDepartments();
-        if(departments.size() > 0)
+        if (departments.size() > 0)
             return ResponseEntity.ok(departments);
         else return ResponseEntity.noContent().build();
     }
 
     @GetMapping("available_times/{identity}")
-    public ResponseEntity<?> fetchEachAvailableTimes(@PathVariable String identity){
+    public ResponseEntity<?> fetchEachAvailableTimes(@PathVariable String identity) {
         List<AvailableTime> availableTimes = resourceService.fetchEachAvailableTimes(identity);
-        if(availableTimes != null)
+        if (availableTimes != null)
             return ResponseEntity.ok(availableTimes);
         else return ResponseEntity.noContent().build();
     }
 
     @GetMapping("profile/{identity}")
-    public ResponseEntity<?> fetchEachProfile(@PathVariable String identity){
+    public ResponseEntity<?> fetchEachProfile(@PathVariable String identity) {
         Profile profile = resourceService.fetchEachProfile(identity);
-        if(profile != null){
+        if (profile != null) {
             HttpHeaders headers = this.generateImageHeader(profile);
             return new ResponseEntity<>(profile.getFileData(), headers, HttpStatus.OK);
         }

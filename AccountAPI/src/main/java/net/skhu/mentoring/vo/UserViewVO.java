@@ -19,16 +19,16 @@ public class UserViewVO {
     private String type;
     private String departmentName;
 
-    public static UserViewVO builtToVO(Account account){
+    public static UserViewVO builtToVO(Account account) {
         String tmpType = "";
-        switch(account.getType()){
-            case UserType.STUDENT :
+        switch (account.getType()) {
+            case UserType.STUDENT:
                 tmpType = "학생";
                 break;
-            case UserType.PROFESSOR :
+            case UserType.PROFESSOR:
                 tmpType = "교수";
                 break;
-            case UserType.EMPLOYEE :
+            case UserType.EMPLOYEE:
                 tmpType = "직원";
                 break;
         }
