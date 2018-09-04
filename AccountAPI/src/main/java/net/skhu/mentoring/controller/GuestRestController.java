@@ -16,7 +16,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 @RestController
-@CrossOrigin
+@CrossOrigin(origins = "http://localhost:3000")
 @RequestMapping("/AccountAPI/guest")
 public class GuestRestController {
     @Autowired
@@ -26,26 +26,29 @@ public class GuestRestController {
     private GuestService guestService;
 
     @PostMapping("login")
-    public ResponseEntity<String> tokenLogin(@RequestBody LoginModel loginModel){
+    public ResponseEntity<String> tokenLogin(@RequestBody LoginModel loginModel) {
         try {
             return ResponseEntity.ok(tokenLoginService.tokenLogin(loginModel.getIdentity(), loginModel.getPassword()));
-        } catch(CustomException e){
-            return new ResponseEntity(e.getMessage(), e.getHttpStatus());
+        } catch (CustomException e) {
+            e.printStackTrace();
+            return ResponseEntity
+                    .status(e.getHttpStatus())
+                    .body(e.getMessage());
         }
     }
 
     @PostMapping("sign/student")
-    public ResponseEntity<String> executeStudentSign(@RequestBody StudentSignModel studentSignModel){
+    public ResponseEntity<String> executeStudentSign(@RequestBody StudentSignModel studentSignModel) {
         return guestService.studentSignMessage(studentSignModel);
     }
 
     @PostMapping("sign/professor")
-    public ResponseEntity<String> executeProfessorSign(@RequestBody ProfessorSignModel professorSignModel){
+    public ResponseEntity<String> executeProfessorSign(@RequestBody ProfessorSignModel professorSignModel) {
         return guestService.professorSignMessage(professorSignModel);
     }
 
     @PostMapping("sign/employee")
-    public ResponseEntity<String> executeEmployeeSign(@RequestBody EmployeeSignModel employeeSignModel){
+    public ResponseEntity<String> executeEmployeeSign(@RequestBody EmployeeSignModel employeeSignModel) {
         return guestService.employeeSignMessage(employeeSignModel);
     }
 }
