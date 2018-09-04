@@ -26,7 +26,7 @@ public class JwtTokenFilter extends GenericFilterBean {
         boolean validated = false;
         try {
             validated = jwtTokenProvider.validateToken(token);
-        } catch(CustomException e){
+        } catch (CustomException e) {
             throw new CustomException(e.getMessage(), e.getHttpStatus());
         } finally {
             if (token != null && validated) {

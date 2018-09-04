@@ -26,17 +26,17 @@ public class PrincipalGenerator {
     @Autowired
     private StudentRepository studentRepository;
 
-    public String fetchRoleWithAccount(final Account account){
+    public String fetchRoleWithAccount(final Account account) {
         boolean isAdmin = false;
 
-        switch(account.getType()){
-            case UserType.PROFESSOR :
-            case UserType.EMPLOYEE :
+        switch (account.getType()) {
+            case UserType.PROFESSOR:
+            case UserType.EMPLOYEE:
                 isAdmin = true;
                 break;
-            case UserType.STUDENT :
+            case UserType.STUDENT:
                 Optional<Student> student = studentRepository.findByIdentity(account.getIdentity());
-                if(!student.isPresent()) break;
+                if (!student.isPresent()) break;
                 else {
                     Student tmpStudent = student.get();
                     isAdmin = tmpStudent.getHasChairman() ? true : false;
@@ -46,16 +46,16 @@ public class PrincipalGenerator {
         return isAdmin ? "ROLE_ADMIN" : "ROLE_USER";
     }
 
-    public PrincipalVO fetchPrincipalVOWithAccount(final Account account){
-        if(account == null) return null;
-        switch(account.getType()){
-            case UserType.EMPLOYEE :
+    public PrincipalVO fetchPrincipalVOWithAccount(final Account account) {
+        if (account == null) return null;
+        switch (account.getType()) {
+            case UserType.EMPLOYEE:
                 Optional<Employee> employee = employeeRepository.findByIdentity(account.getIdentity());
                 return PrincipalVO.builtToVOWithEmployee(employee.get(), LocalDateTime.now());
-            case UserType.PROFESSOR :
+            case UserType.PROFESSOR:
                 Optional<Professor> professor = professorRepository.findByIdentity(account.getIdentity());
                 return PrincipalVO.builtToVOWithProfessor(professor.get(), LocalDateTime.now());
-            case UserType.STUDENT :
+            case UserType.STUDENT:
                 Optional<Student> student = studentRepository.findByIdentity(account.getIdentity());
                 return PrincipalVO.builtToVOWithStudent(student.get(), LocalDateTime.now());
         }

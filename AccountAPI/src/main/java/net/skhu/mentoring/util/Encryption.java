@@ -18,7 +18,7 @@ public class Encryption {
                 sb.append(Integer.toHexString(0xff & digested[k]));
             }
             return sb.toString();
-        }catch(NoSuchAlgorithmException e){
+        } catch (NoSuchAlgorithmException e) {
             return s;
         }
     }

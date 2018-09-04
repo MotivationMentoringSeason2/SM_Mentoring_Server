@@ -35,14 +35,14 @@ public class ResourceServiceImpl implements ResourceService {
     }
 
     @Override
-    public List<Department> fetchAllDepartments(){
+    public List<Department> fetchAllDepartments() {
         return departmentRepository.findAll();
     }
 
     @Override
-    public List<AvailableTime> fetchEachAvailableTimes(final String identity){
+    public List<AvailableTime> fetchEachAvailableTimes(final String identity) {
         Optional<Account> account = accountRepository.findByIdentity(identity);
-        if(account.isPresent()){
+        if (account.isPresent()) {
             return availableTimeRepository.findByAccount(account.get());
         } else return null;
     }
@@ -50,7 +50,7 @@ public class ResourceServiceImpl implements ResourceService {
     @Override
     public Profile fetchEachProfile(String identity) {
         Optional<Account> account = accountRepository.findByIdentity(identity);
-        if(account.isPresent()){
+        if (account.isPresent()) {
             Optional<Profile> profile = profileRepository.findByAccount(account.get());
             return profile.isPresent() ? profile.get() : null;
         } else return null;

@@ -34,12 +34,12 @@ public class TokenLoginServiceImpl implements TokenLoginService {
     public String tokenLogin(final String identity, final String password) throws CustomException {
         try {
             Optional<Account> account = accountRepository.findByIdentity(identity);
-            if(account != null) {
+            if (account != null) {
                 authenticationManager.authenticate(new UsernamePasswordAuthenticationToken(identity, password));
                 return jwtTokenProvider.createToken(identity, principalGenerator.fetchRoleWithAccount(account.get()), principalGenerator.fetchPrincipalVOWithAccount(account.get()));
             } else throw new UsernameNotFoundException("존재하지 않은 아이디를 입력하셨습니다.");
         } catch (AuthenticationException e) {
-            throw new CustomException(e.getMessage(), HttpStatus.NO_CONTENT);
+            throw new CustomException(e.getMessage(), HttpStatus.NON_AUTHORITATIVE_INFORMATION);
         }
     }
 }

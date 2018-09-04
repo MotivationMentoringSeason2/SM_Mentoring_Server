@@ -24,7 +24,7 @@ public class ProfessorSignModel {
     private Boolean hasChairman;
     private List<Long> multiDepartments;
 
-    public static ProfessorSignModel builtToUpdateModel(Professor professor){
+    public static ProfessorSignModel builtToUpdateModel(Professor professor) {
         return new ProfessorSignModel(professor.getIdentity(), "", professor.getGender(), professor.getDepartment() != null ? professor.getDepartment().getId() : -1, professor.getName(), professor.getPhone(), professor.getEmail(), professor.getOfficePhone(), professor.getOfficePlace(), professor.getHasChairman(), professor.getMultiDepartments().stream().map(department -> department.getId()).collect(Collectors.toList()));
     }
 }

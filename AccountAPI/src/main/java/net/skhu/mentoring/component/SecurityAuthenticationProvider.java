@@ -42,7 +42,7 @@ public class SecurityAuthenticationProvider implements AuthenticationProvider {
     }
 
     @Override
-    public boolean supports(Class<?> authentication){
+    public boolean supports(Class<?> authentication) {
         return authentication.equals(UsernamePasswordAuthenticationToken.class);
     }
 
@@ -50,16 +50,16 @@ public class SecurityAuthenticationProvider implements AuthenticationProvider {
         private static final long serialVersionUID = 1L;
         private PrincipalVO principalVO;
 
-        public CheckedAuthentication(String loginId, String password, List<GrantedAuthority> grantedAuthorities, PrincipalVO principalVO){
+        public CheckedAuthentication(String loginId, String password, List<GrantedAuthority> grantedAuthorities, PrincipalVO principalVO) {
             super(loginId, password, grantedAuthorities);
             this.principalVO = principalVO;
         }
 
-        public PrincipalVO getPrincipalVO(){
+        public PrincipalVO getPrincipalVO() {
             return this.principalVO;
         }
 
-        public void setPrincipalVO(PrincipalVO principalVO){
+        public void setPrincipalVO(PrincipalVO principalVO) {
             this.principalVO = principalVO;
         }
     }
