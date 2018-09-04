@@ -18,26 +18,26 @@ import java.util.ArrayList;
 import java.util.List;
 
 @Data
-@EqualsAndHashCode(callSuper = true, exclude = {"departmentRelations"})
-@ToString(exclude = {"subDepartments"})
+@EqualsAndHashCode(callSuper = true, exclude = {"departments"})
+@ToString(exclude = {"departments"})
 @Entity
 @Table(name = "employee")
 @DiscriminatorValue(UserType.EMPLOYEE)
 public class Employee extends Account implements Serializable {
     private static final long serialVersionUID = 1L;
 
-    public Employee(){
+    public Employee() {
         super();
     }
 
-    public Employee(Long id, String type, String gender, Department department, String name, String identity, String password, String phone, String email, String officePhone, String officePlace){
+    public Employee(Long id, String type, String gender, Department department, String name, String identity, String password, String phone, String email, String officePhone, String officePlace) {
         super(id, type, gender, department, name, identity, password, phone, email);
         this.officePhone = officePhone;
         this.officePlace = officePlace;
         this.departments = new ArrayList<Department>();
     }
 
-    public Employee(Long id, String type, String gender, Department department, String name, String identity, String password, String phone, String email, String officePhone, String officePlace, List<Department> departments){
+    public Employee(Long id, String type, String gender, Department department, String name, String identity, String password, String phone, String email, String officePhone, String officePlace, List<Department> departments) {
         this(id, type, gender, department, name, identity, password, phone, email, officePhone, officePlace);
         this.departments = departments;
     }
@@ -49,6 +49,6 @@ public class Employee extends Account implements Serializable {
     private String officePlace;
 
     @ManyToMany
-    @JoinTable(name="multimajor", joinColumns=@JoinColumn(name="accountId"), inverseJoinColumns=@JoinColumn(name="departmentId"))
+    @JoinTable(name = "multimajor", joinColumns = @JoinColumn(name = "accountId"), inverseJoinColumns = @JoinColumn(name = "departmentId"))
     private List<Department> departments;
 }

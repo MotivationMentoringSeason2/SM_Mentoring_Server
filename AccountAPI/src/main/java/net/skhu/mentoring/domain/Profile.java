@@ -35,20 +35,20 @@ public class Profile implements Serializable {
     @JoinColumn(name = "accountId")
     private Account account;
 
-    @Column(nullable=false)
+    @Column(nullable = false)
     private String fileName;
 
-    @Column(nullable=false)
+    @Column(nullable = false)
     private Integer fileSize;
 
-    @Basic(fetch=FetchType.LAZY)
+    @Basic(fetch = FetchType.LAZY)
     @Lob
     private byte[] fileData;
 
-    @Column(nullable=false)
+    @Column(nullable = false)
     @Enumerated(EnumType.STRING)
     private ImageSuffix fileSuffix;
 
-    @Column(nullable=false)
+    @Column(nullable = false)
     private LocalDateTime uploadDate;
 }
