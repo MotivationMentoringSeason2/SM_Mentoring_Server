@@ -34,6 +34,7 @@ import java.security.Principal;
 import java.time.LocalDateTime;
 import java.time.ZoneId;
 import java.util.Collections;
+import java.util.Comparator;
 import java.util.Date;
 import java.util.List;
 import java.util.Optional;
@@ -76,7 +77,7 @@ public class CommonServiceImpl implements CommonService {
         return currentLoginId.equals(tokenLoginId);
     }
 
-    private boolean timetableVaildation(final List<AvailableTimeModel> timetable) {
+    private boolean timetableValidation(final List<AvailableTimeModel> timetable) {
         for (Day d : Day.values()) {
             List<AvailableTimeModel> dayTimetable = timetable.stream().filter(t -> t.getDay() == d).collect(Collectors.toList());
             if (dayTimetable.size() > 1) {
@@ -85,7 +86,7 @@ public class CommonServiceImpl implements CommonService {
                     for (int l = 0; l < dayTimetable.size(); l++) {
                         if (l != k) {
                             AvailableTimeModel anotherModel = dayTimetable.get(l);
-                            if (tmpModel.isNotVaildRange(anotherModel)) return false;
+                            if (!tmpModel.isValidRange(anotherModel)) return false;
                         }
                     }
                 }
@@ -119,6 +120,15 @@ public class CommonServiceImpl implements CommonService {
                 return PrincipalVO.builtToVOWithEmployee(employeeRepository.findByIdentity(principal.getName()).get(), LocalDateTime.ofInstant(loginTime.toInstant(), ZoneId.systemDefault()));
         }
         return null;
+    }
+
+    @Override
+    public List<AvailableTimeModel> fetchCurrentAccountTimetableModel(Principal principal) {
+        Account account = accountRepository.findByIdentity(principal.getName()).get();
+        return availableTimeRepository.findByAccount(account).stream()
+                .map(availableTime -> AvailableTimeModel.builtToModel(availableTime))
+                .sorted(Comparator.comparingInt(AvailableTimeModel::getDayOrdinal))
+                .collect(Collectors.toList());
     }
 
     @Override
@@ -159,11 +169,11 @@ public class CommonServiceImpl implements CommonService {
             throw new CustomException("유효하지 않은 토큰입니다. 다시 시도 바랍니다.", HttpStatus.UNAUTHORIZED);
 
         if (timetable.size() <= 0)
-            return new ResponseEntity<>("시간대를 하나라도 설정하고 난 이후에 시도 바랍니다.", HttpStatus.FORBIDDEN);
+            return new ResponseEntity<>("시간대를 하나라도 설정하고 난 이후에 시도 바랍니다.", HttpStatus.NON_AUTHORITATIVE_INFORMATION);
         Account account = accountRepository.findByIdentity(principal.getName()).get();
         if (timetable.size() > 1) Collections.sort(timetable);
-        if (!this.timetableVaildation(timetable))
-            return new ResponseEntity<>("가능한 시간대는 시간이 겹치지 않도록 작성 바랍니다.", HttpStatus.FORBIDDEN);
+        if (!this.timetableValidation(timetable))
+            return new ResponseEntity<>("가능한 시간대는 시간이 겹치지 않도록 작성 바랍니다.", HttpStatus.NON_AUTHORITATIVE_INFORMATION);
         if (availableTimeRepository.existsByAccount(account)) {
             availableTimeRepository.deleteByAccount(account);
         }

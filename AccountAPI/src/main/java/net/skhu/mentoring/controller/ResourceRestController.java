@@ -1,9 +1,9 @@
 package net.skhu.mentoring.controller;
 
-import net.skhu.mentoring.domain.AvailableTime;
 import net.skhu.mentoring.domain.Department;
 import net.skhu.mentoring.domain.Profile;
 import net.skhu.mentoring.service.interfaces.ResourceService;
+import net.skhu.mentoring.vo.AvailableTimeVO;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
@@ -56,7 +56,7 @@ public class ResourceRestController {
 
     @GetMapping("available_times/{identity}")
     public ResponseEntity<?> fetchEachAvailableTimes(@PathVariable String identity) {
-        List<AvailableTime> availableTimes = resourceService.fetchEachAvailableTimes(identity);
+        List<AvailableTimeVO> availableTimes = resourceService.fetchEachAvailableTimes(identity);
         if (availableTimes != null)
             return ResponseEntity.ok(availableTimes);
         else return ResponseEntity.noContent().build();

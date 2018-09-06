@@ -39,7 +39,7 @@ public class GuestRestController {
         }
     }
 
-    @GetMapping("account/identity")
+    @PostMapping("account/identity")
     public ResponseEntity<String> findAccountIdentity(@RequestBody IdentityFindModel identityFindModel){
         return guestService.fetchFindAccountIdentity(identityFindModel);
     }
