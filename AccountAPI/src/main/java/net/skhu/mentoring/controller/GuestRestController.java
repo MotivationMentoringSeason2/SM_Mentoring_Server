@@ -2,6 +2,7 @@ package net.skhu.mentoring.controller;
 
 import net.skhu.mentoring.exception.CustomException;
 import net.skhu.mentoring.model.EmployeeSignModel;
+import net.skhu.mentoring.model.IdentityFindModel;
 import net.skhu.mentoring.model.LoginModel;
 import net.skhu.mentoring.model.ProfessorSignModel;
 import net.skhu.mentoring.model.StudentSignModel;
@@ -10,6 +11,7 @@ import net.skhu.mentoring.service.interfaces.TokenLoginService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.CrossOrigin;
+import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -35,6 +37,11 @@ public class GuestRestController {
                     .status(e.getHttpStatus())
                     .body(e.getMessage());
         }
+    }
+
+    @GetMapping("account/identity")
+    public ResponseEntity<String> findAccountIdentity(@RequestBody IdentityFindModel identityFindModel){
+        return guestService.fetchFindAccountIdentity(identityFindModel);
     }
 
     @PostMapping("sign/student")
