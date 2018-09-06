@@ -1,5 +1,6 @@
 package net.skhu.mentoring.service.implement_objects;
 
+import net.skhu.mentoring.domain.Account;
 import net.skhu.mentoring.domain.Department;
 import net.skhu.mentoring.domain.Employee;
 import net.skhu.mentoring.domain.Professor;
@@ -7,6 +8,7 @@ import net.skhu.mentoring.domain.Student;
 import net.skhu.mentoring.enumeration.StudentStatus;
 import net.skhu.mentoring.enumeration.UserType;
 import net.skhu.mentoring.model.EmployeeSignModel;
+import net.skhu.mentoring.model.IdentityFindModel;
 import net.skhu.mentoring.model.ProfessorSignModel;
 import net.skhu.mentoring.model.StudentSignModel;
 import net.skhu.mentoring.repository.AccountRepository;
@@ -24,6 +26,7 @@ import org.springframework.stereotype.Service;
 import javax.transaction.Transactional;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 import java.util.stream.Collectors;
 
 @Service
@@ -43,13 +46,28 @@ public class GuestServiceImpl implements GuestService {
     @Autowired
     private EmployeeRepository employeeRepository;
 
-    private boolean confirmMainAndMulti(long departmentId, List<Long> multiDepartments) {
+    private boolean confirmMainAndMulti(final long departmentId, final List<Long> multiDepartments) {
         return multiDepartments.contains(departmentId);
     }
 
     @Override
+    public ResponseEntity<String> fetchFindAccountIdentity(final IdentityFindModel identityFindModel) {
+        Optional<Account> account = accountRepository.findByNameAndEmail(identityFindModel.getName(), identityFindModel.getEmail());
+        if(!account.isPresent()){
+            return new ResponseEntity<>("존재하지 않는 회원 정보입니다.", HttpStatus.NON_AUTHORITATIVE_INFORMATION);
+        } else {
+            Account tmpAccount = account.get();
+            if(tmpAccount.getPhone().equals(identityFindModel.getPhone())){
+                return new ResponseEntity<>(String.format("%s 님의 아이디는 %s 입니다.", identityFindModel.getName(), tmpAccount.getIdentity()), HttpStatus.OK);
+            } else {
+                return new ResponseEntity<>("전화번호가 일치하지 않습니다. 전화번호는 하이픈을 제외하고 입력 부탁 드립니다.", HttpStatus.NON_AUTHORITATIVE_INFORMATION);
+            }
+        }
+    }
+
+    @Override
     @Transactional
-    public ResponseEntity<String> studentSignMessage(StudentSignModel studentSignModel) {
+    public ResponseEntity<String> studentSignMessage(final StudentSignModel studentSignModel) {
         Department department;
         List<Department> multiDepartments;
 
@@ -80,7 +98,7 @@ public class GuestServiceImpl implements GuestService {
 
     @Override
     @Transactional
-    public ResponseEntity<String> professorSignMessage(ProfessorSignModel professorSignModel) {
+    public ResponseEntity<String> professorSignMessage(final ProfessorSignModel professorSignModel) {
         Department department;
         List<Department> multiDepartments;
 
@@ -110,7 +128,7 @@ public class GuestServiceImpl implements GuestService {
 
     @Override
     @Transactional
-    public ResponseEntity<String> employeeSignMessage(EmployeeSignModel employeeSignModel) {
+    public ResponseEntity<String> employeeSignMessage(final EmployeeSignModel employeeSignModel) {
         List<Department> departments;
 
         if (accountRepository.existsByIdentity(employeeSignModel.getIdentity()))

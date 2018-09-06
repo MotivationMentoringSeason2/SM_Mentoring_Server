@@ -1,7 +1,6 @@
 package net.skhu.mentoring.service.implement_objects;
 
 import net.skhu.mentoring.domain.Account;
-import net.skhu.mentoring.domain.AvailableTime;
 import net.skhu.mentoring.domain.Department;
 import net.skhu.mentoring.domain.Profile;
 import net.skhu.mentoring.repository.AccountRepository;
@@ -9,11 +8,15 @@ import net.skhu.mentoring.repository.AvailableTimeRepository;
 import net.skhu.mentoring.repository.DepartmentRepository;
 import net.skhu.mentoring.repository.ProfileRepository;
 import net.skhu.mentoring.service.interfaces.ResourceService;
+import net.skhu.mentoring.vo.AvailableTimeVO;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.util.Collections;
+import java.util.Comparator;
 import java.util.List;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 @Service
 public class ResourceServiceImpl implements ResourceService {
@@ -40,10 +43,14 @@ public class ResourceServiceImpl implements ResourceService {
     }
 
     @Override
-    public List<AvailableTime> fetchEachAvailableTimes(final String identity) {
+    public List<AvailableTimeVO> fetchEachAvailableTimes(final String identity) {
         Optional<Account> account = accountRepository.findByIdentity(identity);
         if (account.isPresent()) {
-            return availableTimeRepository.findByAccount(account.get());
+            List<AvailableTimeVO> timetables = availableTimeRepository.findByAccount(account.get()).stream()
+                    .map(timetable -> AvailableTimeVO.builtToVO(timetable))
+                    .sorted(Comparator.comparingInt(AvailableTimeVO::getDayOrdinal))
+                    .collect(Collectors.toList());
+            return timetables;
         } else return null;
     }
 

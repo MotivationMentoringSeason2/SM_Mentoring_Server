@@ -1,6 +1,7 @@
 package net.skhu.mentoring.controller;
 
 import net.skhu.mentoring.exception.CustomException;
+import net.skhu.mentoring.model.AvailableTimeModel;
 import net.skhu.mentoring.service.interfaces.CommonService;
 import net.skhu.mentoring.vo.PrincipalVO;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -12,12 +13,15 @@ import org.springframework.security.web.authentication.logout.SecurityContextLog
 import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PutMapping;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.security.Principal;
+import java.util.List;
 
 @RestController
 @CrossOrigin(origins = "http://localhost:3000")
@@ -38,6 +42,17 @@ public class CommonRestController {
         } catch (CustomException e) {
             return new ResponseEntity(e.getMessage(), e.getHttpStatus());
         }
+    }
+
+    @GetMapping("available_times")
+    public ResponseEntity<?> fetchAvailableTimeModels(Principal principal) {
+        List<AvailableTimeModel> availableTimes = commonService.fetchCurrentAccountTimetableModel(principal);
+        return ResponseEntity.ok(availableTimes);
+    }
+
+    @PutMapping("available_times")
+    public ResponseEntity<?> executeSavingAvailableTimes(HttpServletRequest request, Principal principal, @RequestBody List<AvailableTimeModel> timetables){
+        return commonService.executeSavingMyAvailableTime(principal, request, timetables);
     }
 
     @DeleteMapping("logout")

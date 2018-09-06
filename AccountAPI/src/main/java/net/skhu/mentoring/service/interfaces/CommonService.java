@@ -15,6 +15,7 @@ import java.util.List;
 
 public interface CommonService {
     PrincipalVO fetchCurrentPrincipal(final Principal principal, final HttpServletRequest request);
+    List<AvailableTimeModel> fetchCurrentAccountTimetableModel(final Principal principal);
     StudentSignModel fetchCurrentStudentInfo(final Principal principal, final HttpServletRequest request);
     ProfessorSignModel fetchCurrentProfessorInfo(final Principal principal, final HttpServletRequest request);
     EmployeeSignModel fetchCurrentEmployeeInfo(final Principal principal, final HttpServletRequest request);
