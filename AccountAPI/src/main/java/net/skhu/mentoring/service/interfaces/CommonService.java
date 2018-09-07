@@ -2,6 +2,7 @@ package net.skhu.mentoring.service.interfaces;
 
 import net.skhu.mentoring.model.AvailableTimeModel;
 import net.skhu.mentoring.model.EmployeeSignModel;
+import net.skhu.mentoring.model.LoginModel;
 import net.skhu.mentoring.model.ProfessorSignModel;
 import net.skhu.mentoring.model.StudentSignModel;
 import net.skhu.mentoring.vo.PrincipalVO;
@@ -15,6 +16,7 @@ import java.util.List;
 
 public interface CommonService {
     PrincipalVO fetchCurrentPrincipal(final Principal principal, final HttpServletRequest request);
+    boolean executeConfirmCurrentPassword(final Principal principal, final HttpServletRequest request, final LoginModel loginModel);
     List<AvailableTimeModel> fetchCurrentAccountTimetableModel(final Principal principal);
     StudentSignModel fetchCurrentStudentInfo(final Principal principal, final HttpServletRequest request);
     ProfessorSignModel fetchCurrentProfessorInfo(final Principal principal, final HttpServletRequest request);

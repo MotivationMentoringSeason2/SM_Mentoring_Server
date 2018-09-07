@@ -3,6 +3,7 @@ package net.skhu.mentoring.controller;
 import net.skhu.mentoring.exception.CustomException;
 import net.skhu.mentoring.model.AvailableTimeModel;
 import net.skhu.mentoring.model.EmployeeSignModel;
+import net.skhu.mentoring.model.LoginModel;
 import net.skhu.mentoring.model.ProfessorSignModel;
 import net.skhu.mentoring.model.StudentSignModel;
 import net.skhu.mentoring.service.interfaces.CommonService;
@@ -17,6 +18,7 @@ import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -71,6 +73,11 @@ public class CommonRestController {
             default :
                 return ResponseEntity.noContent().build();
         }
+    }
+
+    @PostMapping("password_confirm")
+    public ResponseEntity<?> executeCurrentPassword(HttpServletRequest request, Principal principal, @RequestBody LoginModel loginModel){
+        return ResponseEntity.ok(commonService.executeConfirmCurrentPassword(principal, request, loginModel));
     }
 
     @PutMapping("sign_form/student")

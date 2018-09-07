@@ -15,6 +15,7 @@ import net.skhu.mentoring.enumeration.UserType;
 import net.skhu.mentoring.exception.CustomException;
 import net.skhu.mentoring.model.AvailableTimeModel;
 import net.skhu.mentoring.model.EmployeeSignModel;
+import net.skhu.mentoring.model.LoginModel;
 import net.skhu.mentoring.model.ProfessorSignModel;
 import net.skhu.mentoring.model.StudentSignModel;
 import net.skhu.mentoring.repository.AccountRepository;
@@ -91,6 +92,14 @@ public class CommonServiceImpl implements CommonService {
         return multiDepartments.contains(departmentId);
     }
 
+    private boolean hasNameAndEmailAccountAndIsMine(final String name, final String email, final Principal principal){
+        Optional<Account> account = accountRepository.findByNameAndEmail(name, email);
+        if(!account.isPresent()) return false;
+        else return account
+                .map(tmpAccount -> !tmpAccount.getName().equals(principal.getName()))
+                .get();
+    }
+
     private boolean timetableValidation(final List<AvailableTimeModel> timetable) {
         for (Day d : Day.values()) {
             List<AvailableTimeModel> dayTimetable = timetable.stream().filter(t -> t.getDay() == d).collect(Collectors.toList());
@@ -137,6 +146,15 @@ public class CommonServiceImpl implements CommonService {
     }
 
     @Override
+    public boolean executeConfirmCurrentPassword(final Principal principal, final HttpServletRequest request, final LoginModel loginModel) {
+        if (!this.tokenValidation(principal, request))
+            throw new CustomException("유효하지 않은 토큰입니다. 다시 시도 바랍니다.", HttpStatus.UNAUTHORIZED);
+
+        Account account = accountRepository.findByIdentity(principal.getName()).get();
+        return account.getPassword().equals(Encryption.encrypt(loginModel.getPassword(), Encryption.MD5));
+    }
+
+    @Override
     public List<AvailableTimeModel> fetchCurrentAccountTimetableModel(Principal principal) {
         Account account = accountRepository.findByIdentity(principal.getName()).get();
         return availableTimeRepository.findByAccount(account).stream()
@@ -172,7 +190,7 @@ public class CommonServiceImpl implements CommonService {
             throw new CustomException("유효하지 않은 토큰입니다. 다시 시도 바랍니다.", HttpStatus.UNAUTHORIZED);
 
         Account account = accountRepository.findByIdentity(principal.getName()).get();
-        if (account.getType().equals(UserType.EMPLOYEE)) return null;
+        if (!account.getType().equals(UserType.EMPLOYEE)) return null;
         else return EmployeeSignModel.builtToUpdateModel(employeeRepository.findByIdentity(principal.getName()).get());
     }
 
@@ -183,6 +201,10 @@ public class CommonServiceImpl implements CommonService {
 
         Department department;
         List<Department> multiDepartments;
+
+        if (this.hasNameAndEmailAccountAndIsMine(studentSignModel.getName(), studentSignModel.getEmail(), principal)){
+            return new ResponseEntity<>("이름과 이메일이 중복된 회원이 있습니다. 다시 시도 바랍니다.", HttpStatus.CONFLICT);
+        }
 
         if (confirmMainAndMulti(studentSignModel.getDepartmentId(), studentSignModel.getMultiDepartments()))
             return new ResponseEntity<>("전공과 복수 전공의 유효성을 확인 바랍니다.", HttpStatus.CONFLICT);
@@ -198,7 +220,7 @@ public class CommonServiceImpl implements CommonService {
         else multiDepartments = new ArrayList<>();
 
         Student mainStudent = studentRepository.findByIdentity(principal.getName()).get();
-        Student updateStudent = new Student(mainStudent.getId(), UserType.STUDENT, studentSignModel.getGender(), department, studentSignModel.getName(), studentSignModel.getIdentity(), Encryption.encrypt(studentSignModel.getPassword(), Encryption.MD5), studentSignModel.getPhone(), studentSignModel.getEmail(), studentSignModel.getGrade(), mainStudent.getStatus(), mainStudent.getHasChairman(), multiDepartments);
+        Student updateStudent = new Student(mainStudent.getId(), UserType.STUDENT, studentSignModel.getGender(), department, studentSignModel.getName(), principal.getName(), Encryption.encrypt(studentSignModel.getPassword(), Encryption.MD5), studentSignModel.getPhone(), studentSignModel.getEmail(), studentSignModel.getGrade(), mainStudent.getStatus(), mainStudent.getHasChairman(), multiDepartments);
         Student resultStudent = studentRepository.save(updateStudent);
 
         if (!resultStudent.equals(mainStudent))
@@ -215,6 +237,10 @@ public class CommonServiceImpl implements CommonService {
         Department department;
         List<Department> multiDepartments;
 
+        if (this.hasNameAndEmailAccountAndIsMine(professorSignModel.getName(), professorSignModel.getEmail(), principal)){
+            return new ResponseEntity<>("이름과 이메일이 중복된 회원이 있습니다. 다시 시도 바랍니다.", HttpStatus.CONFLICT);
+        }
+
         if (confirmMainAndMulti(professorSignModel.getDepartmentId(), professorSignModel.getMultiDepartments()))
             return new ResponseEntity<>("주 학과와 담당 학과의 유효성을 확인 바랍니다.", HttpStatus.CONFLICT);
 
@@ -229,7 +255,7 @@ public class CommonServiceImpl implements CommonService {
         else multiDepartments = new ArrayList<>();
 
         Professor mainProfessor = professorRepository.findByIdentity(principal.getName()).get();
-        Professor updateProfessor = new Professor(mainProfessor.getId(), UserType.PROFESSOR, professorSignModel.getGender(), department, professorSignModel.getName(), professorSignModel.getIdentity(), Encryption.encrypt(professorSignModel.getPassword(), Encryption.MD5), professorSignModel.getPhone(), professorSignModel.getEmail(), professorSignModel.getOfficePhone(), professorSignModel.getOfficePlace(), professorSignModel.getHasChairman(), multiDepartments);
+        Professor updateProfessor = new Professor(mainProfessor.getId(), UserType.PROFESSOR, professorSignModel.getGender(), department, professorSignModel.getName(), principal.getName(), Encryption.encrypt(professorSignModel.getPassword(), Encryption.MD5), professorSignModel.getPhone(), professorSignModel.getEmail(), professorSignModel.getOfficePhone(), professorSignModel.getOfficePlace(), professorSignModel.getHasChairman(), multiDepartments);
         Professor resultProfessor = professorRepository.save(updateProfessor);
 
         if (!resultProfessor.equals(mainProfessor))
@@ -245,6 +271,10 @@ public class CommonServiceImpl implements CommonService {
 
         List<Department> departments;
 
+        if (this.hasNameAndEmailAccountAndIsMine(employeeSignModel.getName(), employeeSignModel.getEmail(), principal)){
+            return new ResponseEntity<>("이름과 이메일이 중복된 회원이 있습니다. 다시 시도 바랍니다.", HttpStatus.CONFLICT);
+        }
+
         if (employeeSignModel.getDepartments().size() > 0)
             departments = employeeSignModel.getDepartments().stream()
                     .map(departmentId -> departmentRepository.getOne(departmentId))
@@ -252,7 +282,7 @@ public class CommonServiceImpl implements CommonService {
         else departments = new ArrayList<>();
 
         Employee mainEmployee = employeeRepository.findByIdentity(principal.getName()).get();
-        Employee updateEmployee = new Employee(mainEmployee.getId(), UserType.PROFESSOR, employeeSignModel.getGender(), null, employeeSignModel.getName(), employeeSignModel.getIdentity(), Encryption.encrypt(employeeSignModel.getPassword(), Encryption.MD5), employeeSignModel.getPhone(), employeeSignModel.getEmail(), employeeSignModel.getOfficePhone(), employeeSignModel.getOfficePlace(), departments);
+        Employee updateEmployee = new Employee(mainEmployee.getId(), UserType.PROFESSOR, employeeSignModel.getGender(), null, employeeSignModel.getName(), principal.getName(), Encryption.encrypt(employeeSignModel.getPassword(), Encryption.MD5), employeeSignModel.getPhone(), employeeSignModel.getEmail(), employeeSignModel.getOfficePhone(), employeeSignModel.getOfficePlace(), departments);
         Employee resultEmployee = employeeRepository.save(updateEmployee);
 
         if (!resultEmployee.equals(mainEmployee))
