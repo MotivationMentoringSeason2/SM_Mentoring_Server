@@ -10,7 +10,6 @@ import net.skhu.mentoring.domain.Profile;
 import net.skhu.mentoring.domain.Student;
 import net.skhu.mentoring.enumeration.Day;
 import net.skhu.mentoring.enumeration.ImageSuffix;
-import net.skhu.mentoring.enumeration.StudentStatus;
 import net.skhu.mentoring.enumeration.UserType;
 import net.skhu.mentoring.exception.CustomException;
 import net.skhu.mentoring.model.AvailableTimeModel;
@@ -96,7 +95,7 @@ public class CommonServiceImpl implements CommonService {
         Optional<Account> account = accountRepository.findByNameAndEmail(name, email);
         if(!account.isPresent()) return false;
         else return account
-                .map(tmpAccount -> !tmpAccount.getName().equals(principal.getName()))
+                .map(tmpAccount -> !tmpAccount.getIdentity().equals(principal.getName()))
                 .get();
     }
 
@@ -223,10 +222,10 @@ public class CommonServiceImpl implements CommonService {
         Student updateStudent = new Student(mainStudent.getId(), UserType.STUDENT, studentSignModel.getGender(), department, studentSignModel.getName(), principal.getName(), Encryption.encrypt(studentSignModel.getPassword(), Encryption.MD5), studentSignModel.getPhone(), studentSignModel.getEmail(), studentSignModel.getGrade(), mainStudent.getStatus(), mainStudent.getHasChairman(), multiDepartments);
         Student resultStudent = studentRepository.save(updateStudent);
 
-        if (!resultStudent.equals(mainStudent))
-            return new ResponseEntity<>("학생 회원 수정 과정이 완료 되었습니다. 로그인을 진행하시면 됩니다.", HttpStatus.OK);
+        if (resultStudent != null)
+            return new ResponseEntity<>("학생 회원 수정 과정이 완료 되었습니다.", HttpStatus.OK);
         else
-            return new ResponseEntity<>("학생 회원 수정 내용이 이전과 같습니다. 다시 시도 바랍니다.", HttpStatus.NOT_MODIFIED);
+            return new ResponseEntity<>("학생 회원 수정 중 서버 측에서 문제가 발생하였습니다. 다시 시도 바랍니다.", HttpStatus.NOT_MODIFIED);
     }
 
     @Override
@@ -258,10 +257,10 @@ public class CommonServiceImpl implements CommonService {
         Professor updateProfessor = new Professor(mainProfessor.getId(), UserType.PROFESSOR, professorSignModel.getGender(), department, professorSignModel.getName(), principal.getName(), Encryption.encrypt(professorSignModel.getPassword(), Encryption.MD5), professorSignModel.getPhone(), professorSignModel.getEmail(), professorSignModel.getOfficePhone(), professorSignModel.getOfficePlace(), professorSignModel.getHasChairman(), multiDepartments);
         Professor resultProfessor = professorRepository.save(updateProfessor);
 
-        if (!resultProfessor.equals(mainProfessor))
-            return new ResponseEntity<>("교수 회원 수정 과정이 완료 되었습니다. 로그인을 진행하시면 됩니다.", HttpStatus.OK);
+        if (resultProfessor != null)
+            return new ResponseEntity<>("교수 회원 수정 과정이 완료 되었습니다.", HttpStatus.OK);
         else
-            return new ResponseEntity<>("교수 회원 수정 내용이 이전과 같습니다. 다시 시도 바랍니다.", HttpStatus.NOT_MODIFIED);
+            return new ResponseEntity<>("교수 회원 수정 중 서버 측에서 문제가 발생하였습니다. 다시 시도 바랍니다.", HttpStatus.NOT_MODIFIED);
     }
 
     @Override
@@ -285,10 +284,10 @@ public class CommonServiceImpl implements CommonService {
         Employee updateEmployee = new Employee(mainEmployee.getId(), UserType.PROFESSOR, employeeSignModel.getGender(), null, employeeSignModel.getName(), principal.getName(), Encryption.encrypt(employeeSignModel.getPassword(), Encryption.MD5), employeeSignModel.getPhone(), employeeSignModel.getEmail(), employeeSignModel.getOfficePhone(), employeeSignModel.getOfficePlace(), departments);
         Employee resultEmployee = employeeRepository.save(updateEmployee);
 
-        if (!resultEmployee.equals(mainEmployee))
-            return new ResponseEntity<>("직원 회원 수정 과정이 완료 되었습니다. 로그인을 진행하시면 됩니다.", HttpStatus.OK);
+        if (resultEmployee != null)
+            return new ResponseEntity<>("직원 회원 수정 과정이 완료 되었습니다.", HttpStatus.OK);
         else
-            return new ResponseEntity<>("직원 회원 수정 내용이 이전과 같습니다. 다시 시도 바랍니다.", HttpStatus.NOT_MODIFIED);
+            return new ResponseEntity<>("직원 회원 수정 중 서버 측에서 문제가 발생하였습니다. 다시 시도 바랍니다.", HttpStatus.NOT_MODIFIED);
     }
 
     @Override
