@@ -3,9 +3,14 @@ package net.skhu.mentoring.service.implement_objects;
 import net.skhu.mentoring.component.JwtTokenProvider;
 import net.skhu.mentoring.domain.Account;
 import net.skhu.mentoring.domain.AvailableTime;
+import net.skhu.mentoring.domain.Department;
+import net.skhu.mentoring.domain.Employee;
+import net.skhu.mentoring.domain.Professor;
 import net.skhu.mentoring.domain.Profile;
+import net.skhu.mentoring.domain.Student;
 import net.skhu.mentoring.enumeration.Day;
 import net.skhu.mentoring.enumeration.ImageSuffix;
+import net.skhu.mentoring.enumeration.StudentStatus;
 import net.skhu.mentoring.enumeration.UserType;
 import net.skhu.mentoring.exception.CustomException;
 import net.skhu.mentoring.model.AvailableTimeModel;
@@ -14,6 +19,7 @@ import net.skhu.mentoring.model.ProfessorSignModel;
 import net.skhu.mentoring.model.StudentSignModel;
 import net.skhu.mentoring.repository.AccountRepository;
 import net.skhu.mentoring.repository.AvailableTimeRepository;
+import net.skhu.mentoring.repository.DepartmentRepository;
 import net.skhu.mentoring.repository.EmployeeRepository;
 import net.skhu.mentoring.repository.ProfessorRepository;
 import net.skhu.mentoring.repository.ProfileRepository;
@@ -33,6 +39,7 @@ import java.io.IOException;
 import java.security.Principal;
 import java.time.LocalDateTime;
 import java.time.ZoneId;
+import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.Date;
@@ -58,6 +65,9 @@ public class CommonServiceImpl implements CommonService {
     private AvailableTimeRepository availableTimeRepository;
 
     @Autowired
+    private DepartmentRepository departmentRepository;
+
+    @Autowired
     private ProfileRepository profileRepository;
 
     @Autowired
@@ -75,6 +85,10 @@ public class CommonServiceImpl implements CommonService {
             return false;
         }
         return currentLoginId.equals(tokenLoginId);
+    }
+
+    private boolean confirmMainAndMulti(final long departmentId, final List<Long> multiDepartments) {
+        return multiDepartments.contains(departmentId);
     }
 
     private boolean timetableValidation(final List<AvailableTimeModel> timetable) {
@@ -160,6 +174,91 @@ public class CommonServiceImpl implements CommonService {
         Account account = accountRepository.findByIdentity(principal.getName()).get();
         if (account.getType().equals(UserType.EMPLOYEE)) return null;
         else return EmployeeSignModel.builtToUpdateModel(employeeRepository.findByIdentity(principal.getName()).get());
+    }
+
+    @Override
+    public ResponseEntity<String> executeSavingCurrentStudentInfo(final Principal principal, final HttpServletRequest request, final StudentSignModel studentSignModel) {
+        if (!this.tokenValidation(principal, request))
+            throw new CustomException("유효하지 않은 토큰입니다. 다시 시도 바랍니다.", HttpStatus.UNAUTHORIZED);
+
+        Department department;
+        List<Department> multiDepartments;
+
+        if (confirmMainAndMulti(studentSignModel.getDepartmentId(), studentSignModel.getMultiDepartments()))
+            return new ResponseEntity<>("전공과 복수 전공의 유효성을 확인 바랍니다.", HttpStatus.CONFLICT);
+
+        if (studentSignModel.getDepartmentId() != 0L)
+            department = departmentRepository.getOne(studentSignModel.getDepartmentId());
+        else return new ResponseEntity<>("전공 번호 오류입니다. 다시 시도 바랍니다.", HttpStatus.CONFLICT);
+
+        if (studentSignModel.getMultiDepartments().size() > 0)
+            multiDepartments = studentSignModel.getMultiDepartments().stream()
+                    .map(departmentId -> departmentRepository.getOne(departmentId))
+                    .collect(Collectors.toList());
+        else multiDepartments = new ArrayList<>();
+
+        Student mainStudent = studentRepository.findByIdentity(principal.getName()).get();
+        Student updateStudent = new Student(mainStudent.getId(), UserType.STUDENT, studentSignModel.getGender(), department, studentSignModel.getName(), studentSignModel.getIdentity(), Encryption.encrypt(studentSignModel.getPassword(), Encryption.MD5), studentSignModel.getPhone(), studentSignModel.getEmail(), studentSignModel.getGrade(), mainStudent.getStatus(), mainStudent.getHasChairman(), multiDepartments);
+        Student resultStudent = studentRepository.save(updateStudent);
+
+        if (!resultStudent.equals(mainStudent))
+            return new ResponseEntity<>("학생 회원 수정 과정이 완료 되었습니다. 로그인을 진행하시면 됩니다.", HttpStatus.OK);
+        else
+            return new ResponseEntity<>("학생 회원 수정 내용이 이전과 같습니다. 다시 시도 바랍니다.", HttpStatus.NOT_MODIFIED);
+    }
+
+    @Override
+    public ResponseEntity<String> executeSavingCurrentProfessorInfo(final Principal principal, final HttpServletRequest request, final ProfessorSignModel professorSignModel) {
+        if (!this.tokenValidation(principal, request))
+            throw new CustomException("유효하지 않은 토큰입니다. 다시 시도 바랍니다.", HttpStatus.UNAUTHORIZED);
+
+        Department department;
+        List<Department> multiDepartments;
+
+        if (confirmMainAndMulti(professorSignModel.getDepartmentId(), professorSignModel.getMultiDepartments()))
+            return new ResponseEntity<>("주 학과와 담당 학과의 유효성을 확인 바랍니다.", HttpStatus.CONFLICT);
+
+        if (professorSignModel.getDepartmentId() != 0L)
+            department = departmentRepository.getOne(professorSignModel.getDepartmentId());
+        else return new ResponseEntity<>("전공 번호 오류입니다. 다시 시도 바랍니다.", HttpStatus.CONFLICT);
+
+        if (professorSignModel.getMultiDepartments().size() > 0)
+            multiDepartments = professorSignModel.getMultiDepartments().stream()
+                    .map(departmentId -> departmentRepository.getOne(departmentId))
+                    .collect(Collectors.toList());
+        else multiDepartments = new ArrayList<>();
+
+        Professor mainProfessor = professorRepository.findByIdentity(principal.getName()).get();
+        Professor updateProfessor = new Professor(mainProfessor.getId(), UserType.PROFESSOR, professorSignModel.getGender(), department, professorSignModel.getName(), professorSignModel.getIdentity(), Encryption.encrypt(professorSignModel.getPassword(), Encryption.MD5), professorSignModel.getPhone(), professorSignModel.getEmail(), professorSignModel.getOfficePhone(), professorSignModel.getOfficePlace(), professorSignModel.getHasChairman(), multiDepartments);
+        Professor resultProfessor = professorRepository.save(updateProfessor);
+
+        if (!resultProfessor.equals(mainProfessor))
+            return new ResponseEntity<>("교수 회원 수정 과정이 완료 되었습니다. 로그인을 진행하시면 됩니다.", HttpStatus.OK);
+        else
+            return new ResponseEntity<>("교수 회원 수정 내용이 이전과 같습니다. 다시 시도 바랍니다.", HttpStatus.NOT_MODIFIED);
+    }
+
+    @Override
+    public ResponseEntity<String> executeSavingCurrentEmployeeInfo(final Principal principal, final HttpServletRequest request, final EmployeeSignModel employeeSignModel) {
+        if (!this.tokenValidation(principal, request))
+            throw new CustomException("유효하지 않은 토큰입니다. 다시 시도 바랍니다.", HttpStatus.UNAUTHORIZED);
+
+        List<Department> departments;
+
+        if (employeeSignModel.getDepartments().size() > 0)
+            departments = employeeSignModel.getDepartments().stream()
+                    .map(departmentId -> departmentRepository.getOne(departmentId))
+                    .collect(Collectors.toList());
+        else departments = new ArrayList<>();
+
+        Employee mainEmployee = employeeRepository.findByIdentity(principal.getName()).get();
+        Employee updateEmployee = new Employee(mainEmployee.getId(), UserType.PROFESSOR, employeeSignModel.getGender(), null, employeeSignModel.getName(), employeeSignModel.getIdentity(), Encryption.encrypt(employeeSignModel.getPassword(), Encryption.MD5), employeeSignModel.getPhone(), employeeSignModel.getEmail(), employeeSignModel.getOfficePhone(), employeeSignModel.getOfficePlace(), departments);
+        Employee resultEmployee = employeeRepository.save(updateEmployee);
+
+        if (!resultEmployee.equals(mainEmployee))
+            return new ResponseEntity<>("직원 회원 수정 과정이 완료 되었습니다. 로그인을 진행하시면 됩니다.", HttpStatus.OK);
+        else
+            return new ResponseEntity<>("직원 회원 수정 내용이 이전과 같습니다. 다시 시도 바랍니다.", HttpStatus.NOT_MODIFIED);
     }
 
     @Override

@@ -19,6 +19,9 @@ public interface CommonService {
     StudentSignModel fetchCurrentStudentInfo(final Principal principal, final HttpServletRequest request);
     ProfessorSignModel fetchCurrentProfessorInfo(final Principal principal, final HttpServletRequest request);
     EmployeeSignModel fetchCurrentEmployeeInfo(final Principal principal, final HttpServletRequest request);
+    ResponseEntity<String> executeSavingCurrentStudentInfo(final Principal principal, final HttpServletRequest request, final StudentSignModel studentSignModel);
+    ResponseEntity<String> executeSavingCurrentProfessorInfo(final Principal principal, final HttpServletRequest request, final ProfessorSignModel professorSignModel);
+    ResponseEntity<String> executeSavingCurrentEmployeeInfo(final Principal principal, final HttpServletRequest request, final EmployeeSignModel employeeSignModel);
     ResponseEntity<String> executeSavingMyAvailableTime(final Principal principal, final HttpServletRequest request, final List<AvailableTimeModel> timetable);
     ResponseEntity<String> executeProfileUploading(final MultipartFile file, final Principal principal, final HttpServletRequest request) throws IOException;
 }
