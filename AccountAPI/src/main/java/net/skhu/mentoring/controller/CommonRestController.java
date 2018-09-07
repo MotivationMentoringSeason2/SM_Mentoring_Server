@@ -2,6 +2,10 @@ package net.skhu.mentoring.controller;
 
 import net.skhu.mentoring.exception.CustomException;
 import net.skhu.mentoring.model.AvailableTimeModel;
+import net.skhu.mentoring.model.EmployeeSignModel;
+import net.skhu.mentoring.model.LoginModel;
+import net.skhu.mentoring.model.ProfessorSignModel;
+import net.skhu.mentoring.model.StudentSignModel;
 import net.skhu.mentoring.service.interfaces.CommonService;
 import net.skhu.mentoring.vo.PrincipalVO;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -13,6 +17,8 @@ import org.springframework.security.web.authentication.logout.SecurityContextLog
 import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -53,6 +59,40 @@ public class CommonRestController {
     @PutMapping("available_times")
     public ResponseEntity<?> executeSavingAvailableTimes(HttpServletRequest request, Principal principal, @RequestBody List<AvailableTimeModel> timetables){
         return commonService.executeSavingMyAvailableTime(principal, request, timetables);
+    }
+
+    @GetMapping("sign_form/{type}")
+    public ResponseEntity<?> fetchUpdateSignForm(HttpServletRequest request, Principal principal, @PathVariable String type){
+        switch(type){
+            case "STUDENT" :
+                return ResponseEntity.ok(commonService.fetchCurrentStudentInfo(principal, request));
+            case "PROFESSOR" :
+                return ResponseEntity.ok(commonService.fetchCurrentProfessorInfo(principal, request));
+            case "EMPLOYEE" :
+                return ResponseEntity.ok(commonService.fetchCurrentEmployeeInfo(principal, request));
+            default :
+                return ResponseEntity.noContent().build();
+        }
+    }
+
+    @PostMapping("password_confirm")
+    public ResponseEntity<?> executeCurrentPassword(HttpServletRequest request, Principal principal, @RequestBody LoginModel loginModel){
+        return ResponseEntity.ok(commonService.executeConfirmCurrentPassword(principal, request, loginModel));
+    }
+
+    @PutMapping("sign_form/student")
+    public ResponseEntity<String> executeUpdateStudentSignForm(HttpServletRequest request, Principal principal, @RequestBody StudentSignModel studentSignModel){
+        return commonService.executeSavingCurrentStudentInfo(principal, request, studentSignModel);
+    }
+
+    @PutMapping("sign_form/professor")
+    public ResponseEntity<String> executeUpdateProfessorSignForm(HttpServletRequest request, Principal principal, @RequestBody ProfessorSignModel professorSignModel){
+        return commonService.executeSavingCurrentProfessorInfo(principal, request, professorSignModel);
+    }
+
+    @PutMapping("sign_form/employee")
+    public ResponseEntity<String> executeUpdateEmployeeSignForm(HttpServletRequest request, Principal principal, @RequestBody EmployeeSignModel employeeSignModel){
+        return commonService.executeSavingCurrentEmployeeInfo(principal, request, employeeSignModel);
     }
 
     @DeleteMapping("logout")

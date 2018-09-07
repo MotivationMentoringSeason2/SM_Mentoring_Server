@@ -50,6 +50,10 @@ public class GuestServiceImpl implements GuestService {
         return multiDepartments.contains(departmentId);
     }
 
+    private boolean hasNameAndEmailAccount(final String name, final String email){
+        return accountRepository.findByNameAndEmail(name, email).isPresent();
+    }
+
     @Override
     public ResponseEntity<String> fetchFindAccountIdentity(final IdentityFindModel identityFindModel) {
         Optional<Account> account = accountRepository.findByNameAndEmail(identityFindModel.getName(), identityFindModel.getEmail());
@@ -73,6 +77,10 @@ public class GuestServiceImpl implements GuestService {
 
         if (accountRepository.existsByIdentity(studentSignModel.getIdentity()))
             return new ResponseEntity<>("회원 아이디가 이미 존재합니다. 다시 시도 바랍니다.", HttpStatus.CONFLICT);
+
+        if(this.hasNameAndEmailAccount(studentSignModel.getName(), studentSignModel.getEmail())){
+            return new ResponseEntity<>("이름과 이메일이 중복된 회원이 있습니다. 다시 시도 바랍니다.", HttpStatus.CONFLICT);
+        }
 
         if (confirmMainAndMulti(studentSignModel.getDepartmentId(), studentSignModel.getMultiDepartments()))
             return new ResponseEntity<>("전공과 복수 전공의 유효성을 확인 바랍니다.", HttpStatus.CONFLICT);
@@ -105,6 +113,10 @@ public class GuestServiceImpl implements GuestService {
         if (accountRepository.existsByIdentity(professorSignModel.getIdentity()))
             return new ResponseEntity<>("회원 아이디가 이미 존재합니다. 다시 시도 바랍니다.", HttpStatus.CONFLICT);
 
+        if (this.hasNameAndEmailAccount(professorSignModel.getName(), professorSignModel.getEmail())){
+            return new ResponseEntity<>("이름과 이메일이 중복된 회원이 있습니다. 다시 시도 바랍니다.", HttpStatus.CONFLICT);
+        }
+
         if (confirmMainAndMulti(professorSignModel.getDepartmentId(), professorSignModel.getMultiDepartments()))
             return new ResponseEntity<>("주 학과와 담당 학과의 유효성을 확인 바랍니다.", HttpStatus.CONFLICT);
 
@@ -133,6 +145,10 @@ public class GuestServiceImpl implements GuestService {
 
         if (accountRepository.existsByIdentity(employeeSignModel.getIdentity()))
             return new ResponseEntity<>("회원 아이디가 이미 존재합니다. 다시 시도 바랍니다.", HttpStatus.CONFLICT);
+
+        if(this.hasNameAndEmailAccount(employeeSignModel.getName(), employeeSignModel.getEmail())){
+            return new ResponseEntity<>("이름과 이메일이 중복된 회원이 있습니다. 다시 시도 바랍니다.", HttpStatus.CONFLICT);
+        }
 
         if (employeeSignModel.getDepartments().size() > 0)
             departments = employeeSignModel.getDepartments().stream()

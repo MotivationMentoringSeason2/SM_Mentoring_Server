@@ -27,7 +27,7 @@ public class AvailableTimeModel implements Comparable<AvailableTimeModel> {
     public boolean isValidRange(AvailableTimeModel another) {
         LocalTime anotherStartTime = another.getStartTime();
         LocalTime anotherEndTime = another.getEndTime();
-        if (anotherStartTime.isAfter(anotherEndTime)) return false;
+        if (this.startTime.isAfter(this.endTime) || anotherStartTime.isAfter(anotherEndTime)) return false;
         if (anotherStartTime.isBefore(this.startTime) && anotherEndTime.isBefore(this.startTime)) return true;
         else if (anotherStartTime.isAfter(this.endTime) && anotherEndTime.isAfter(this.endTime)) return true;
         else return false;
