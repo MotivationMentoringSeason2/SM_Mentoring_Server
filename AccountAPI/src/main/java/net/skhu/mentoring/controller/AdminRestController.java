@@ -30,7 +30,7 @@ public class AdminRestController {
         return ResponseEntity.ok(adminService.getSearchByModel(principal, request));
     }
 
-    @GetMapping
+    @GetMapping("account/options/order_by")
     public ResponseEntity<?> fetchOrderByOptions(Principal principal, HttpServletRequest request){
         return ResponseEntity.ok(adminService.getOrderByModel(principal, request));
     }
