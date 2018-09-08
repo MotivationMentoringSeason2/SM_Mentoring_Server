@@ -7,6 +7,7 @@ import net.skhu.mentoring.domain.Student;
 import net.skhu.mentoring.enumeration.StudentStatus;
 import net.skhu.mentoring.enumeration.UserType;
 import net.skhu.mentoring.model.AccountPagination;
+import net.skhu.mentoring.model.OptionModel;
 import net.skhu.mentoring.repository.AccountRepository;
 import net.skhu.mentoring.repository.AvailableTimeRepository;
 import net.skhu.mentoring.repository.DepartmentRepository;
@@ -32,13 +33,7 @@ public class AdminServiceImpl implements AdminService {
     private StudentRepository studentRepository;
 
     @Autowired
-    private ProfessorRepository professorRepository;
-
-    @Autowired
     private EmployeeRepository employeeRepository;
-
-    @Autowired
-    private DepartmentRepository departmentRepository;
 
     @Autowired
     private JwtTokenProvider jwtTokenProvider;
@@ -64,6 +59,18 @@ public class AdminServiceImpl implements AdminService {
         return principal.getName().equals(tokenLoginId);
     }
 
+
+    @Override
+    public List<OptionModel> getSearchByModel(final Principal principal, final HttpServletRequest request) {
+        if(!this.tokenValidation(principal, request)) return null;
+        return accountRepository.searchBy;
+    }
+
+    @Override
+    public List<OptionModel> getOrderByModel(final Principal principal, final HttpServletRequest request) {
+        if(!this.tokenValidation(principal, request)) return null;
+        return accountRepository.orderBy;
+    }
 
     @Override
     public List<BriefAccountVO> fetchAccountListWithPagination(final Principal principal, final HttpServletRequest request, final AccountPagination accountPagination) {
