@@ -194,6 +194,7 @@ public class CommonServiceImpl implements CommonService {
     }
 
     @Override
+    @Transactional
     public ResponseEntity<String> executeSavingCurrentStudentInfo(final Principal principal, final HttpServletRequest request, final StudentSignModel studentSignModel) {
         if (!this.tokenValidation(principal, request))
             throw new CustomException("유효하지 않은 토큰입니다. 다시 시도 바랍니다.", HttpStatus.UNAUTHORIZED);
@@ -229,6 +230,7 @@ public class CommonServiceImpl implements CommonService {
     }
 
     @Override
+    @Transactional
     public ResponseEntity<String> executeSavingCurrentProfessorInfo(final Principal principal, final HttpServletRequest request, final ProfessorSignModel professorSignModel) {
         if (!this.tokenValidation(principal, request))
             throw new CustomException("유효하지 않은 토큰입니다. 다시 시도 바랍니다.", HttpStatus.UNAUTHORIZED);
@@ -264,6 +266,7 @@ public class CommonServiceImpl implements CommonService {
     }
 
     @Override
+    @Transactional
     public ResponseEntity<String> executeSavingCurrentEmployeeInfo(final Principal principal, final HttpServletRequest request, final EmployeeSignModel employeeSignModel) {
         if (!this.tokenValidation(principal, request))
             throw new CustomException("유효하지 않은 토큰입니다. 다시 시도 바랍니다.", HttpStatus.UNAUTHORIZED);
