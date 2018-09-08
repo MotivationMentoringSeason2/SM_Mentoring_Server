@@ -2,7 +2,7 @@ package net.skhu.mentoring.controller;
 
 import net.skhu.mentoring.model.AccountPagination;
 import net.skhu.mentoring.service.interfaces.AdminService;
-import net.skhu.mentoring.vo.BriefAccountVO;
+import net.skhu.mentoring.vo.FindResultVO;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.CrossOrigin;
@@ -22,7 +22,7 @@ public class AdminRestController {
 
     @GetMapping("account/list")
     public ResponseEntity<?> fetchAccountListWithPagination(Principal principal, HttpServletRequest request, AccountPagination accountPagination){
-        return ResponseEntity.ok(adminService.fetchAccountListWithPagination(principal, request, accountPagination));
+        return ResponseEntity.ok(FindResultVO.builtToVO(adminService.fetchAccountListWithPagination(principal, request, accountPagination), accountPagination));
     }
 
     @GetMapping("account/options/search_by")
