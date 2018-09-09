@@ -3,25 +3,30 @@ package net.skhu.mentoring.service.implement_objects;
 import net.skhu.mentoring.component.JwtTokenProvider;
 import net.skhu.mentoring.domain.Account;
 import net.skhu.mentoring.domain.Employee;
+import net.skhu.mentoring.domain.Professor;
 import net.skhu.mentoring.domain.Student;
-import net.skhu.mentoring.enumeration.StudentStatus;
 import net.skhu.mentoring.enumeration.UserType;
 import net.skhu.mentoring.model.AccountPagination;
 import net.skhu.mentoring.model.OptionModel;
 import net.skhu.mentoring.repository.AccountRepository;
-import net.skhu.mentoring.repository.AvailableTimeRepository;
-import net.skhu.mentoring.repository.DepartmentRepository;
 import net.skhu.mentoring.repository.EmployeeRepository;
 import net.skhu.mentoring.repository.ProfessorRepository;
 import net.skhu.mentoring.repository.StudentRepository;
 import net.skhu.mentoring.service.interfaces.AdminService;
 import net.skhu.mentoring.vo.BriefAccountVO;
+import net.skhu.mentoring.vo.EmployeeViewVO;
+import net.skhu.mentoring.vo.ProfessorViewVO;
+import net.skhu.mentoring.vo.StudentViewVO;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 
 import javax.servlet.http.HttpServletRequest;
+import javax.transaction.Transactional;
 import java.security.Principal;
 import java.util.List;
+import java.util.Optional;
 import java.util.stream.Collectors;
 
 @Service
@@ -31,6 +36,9 @@ public class AdminServiceImpl implements AdminService {
 
     @Autowired
     private StudentRepository studentRepository;
+
+    @Autowired
+    private ProfessorRepository professorRepository;
 
     @Autowired
     private EmployeeRepository employeeRepository;
@@ -106,5 +114,92 @@ public class AdminServiceImpl implements AdminService {
                             return BriefAccountVO.builtToAccountVO(account, "-", "-");
                     }
                 }).collect(Collectors.toList());
+    }
+
+    @Override
+    public ResponseEntity<?> fetchAccountView(final Principal principal, final HttpServletRequest request, final Long id) {
+        if(!this.tokenValidation(principal, request)) return ResponseEntity.noContent().build();
+        Optional<Account> account = accountRepository.findById(id);
+        if(account.isPresent()){
+            Account tmpAccount = account.get();
+            switch(tmpAccount.getType()){
+                case UserType.STUDENT :
+                    return ResponseEntity.ok(
+                        StudentViewVO.builtToVO(studentRepository.findByIdentity(tmpAccount.getIdentity()).get())
+                    );
+                case UserType.PROFESSOR :
+                    return ResponseEntity.ok(
+                        ProfessorViewVO.builtToVO(professorRepository.findByIdentity(tmpAccount.getIdentity()).get())
+                    );
+                case UserType.EMPLOYEE :
+                    return ResponseEntity.ok(
+                        EmployeeViewVO.builtToVO(employeeRepository.findByIdentity(tmpAccount.getIdentity()).get())
+                    );
+                default :
+                    return ResponseEntity.noContent().build();
+            }
+        } else return ResponseEntity.noContent().build();
+    }
+
+    @Override
+    @Transactional
+    public ResponseEntity<?> executeAppointChairman(final Principal principal, final HttpServletRequest request, final Long id) {
+        if(!this.tokenValidation(principal, request)) return null;
+        Optional<Account> myAccount = accountRepository.findByIdentity(principal.getName());
+        if(myAccount.get().getType().equals(UserType.STUDENT))
+            return new ResponseEntity<>("관리자 학생에게는 권한이 없습니다. 학과 교수나 담당 직원에게 연락 바랍니다.", HttpStatus.NON_AUTHORITATIVE_INFORMATION);
+        Optional<Account> account = accountRepository.findById(id);
+        if(account.isPresent()){
+            Account tmpAccount = account.get();
+            switch(tmpAccount.getType()){
+                case UserType.STUDENT :
+                    if(!studentRepository.existsByDepartmentIdAndHasChairmanIsTrue(tmpAccount.getDepartment().getId())){
+                        Student student = studentRepository.findByIdentity(tmpAccount.getIdentity()).get();
+                        student.setHasChairman(true);
+                        studentRepository.save(student);
+                        return new ResponseEntity<>(String.format("%s 님이 %s 회장으로 바뀌었습니다.", student.getName(), student.getDepartment().getName()), HttpStatus.OK);
+                    } else {
+                        return new ResponseEntity<>(String.format("%s 회장이 이미 존재합니다. 다시 시도 바랍니다.", tmpAccount.getDepartment().getName()), HttpStatus.NON_AUTHORITATIVE_INFORMATION);
+                    }
+                case UserType.PROFESSOR :
+                    if(!professorRepository.existsByDepartmentIdAndHasChairmanIsTrue(tmpAccount.getDepartment().getId())){
+                        Professor professor = professorRepository.findByIdentity(tmpAccount.getIdentity()).get();
+                        professor.setHasChairman(true);
+                        professorRepository.save(professor);
+                        return new ResponseEntity<>(String.format("%s 님이 %s 장으로 바뀌었습니다.", professor.getName(), professor.getDepartment().getName()), HttpStatus.OK);
+                    } else {
+                        return new ResponseEntity<>(String.format("%s 장이 이미 존재합니다. 다시 시도 바랍니다.", tmpAccount.getDepartment().getName()), HttpStatus.NON_AUTHORITATIVE_INFORMATION);
+                    }
+                default :
+                    return new ResponseEntity<>("직원은 회장과 학과장 설정이 필요 없습니다.", HttpStatus.NON_AUTHORITATIVE_INFORMATION);
+            }
+        } else return new ResponseEntity<>("존재하지 않는 회원입니다.", HttpStatus.NON_AUTHORITATIVE_INFORMATION);
+    }
+
+    @Override
+    @Transactional
+    public ResponseEntity<?> executeReleaseChairman(Principal principal, HttpServletRequest request, Long id) {
+        if(!this.tokenValidation(principal, request)) return null;
+        Optional<Account> myAccount = accountRepository.findByIdentity(principal.getName());
+        if(myAccount.get().getType().equals(UserType.STUDENT))
+            return new ResponseEntity<>("관리자 학생에게는 권한이 없습니다. 학과 교수나 담당 직원에게 연락 바랍니다.", HttpStatus.NON_AUTHORITATIVE_INFORMATION);
+        Optional<Account> account = accountRepository.findById(id);
+        if(account.isPresent()) {
+            Account tmpAccount = account.get();
+            switch (tmpAccount.getType()) {
+                case UserType.STUDENT:
+                    Student student = studentRepository.findByIdentity(tmpAccount.getIdentity()).get();
+                    student.setHasChairman(false);
+                    studentRepository.save(student);
+                    return new ResponseEntity<>(String.format("%s 님의 회장 해지 작업이 완료되었습니다.", student.getName()), HttpStatus.OK);
+                case UserType.PROFESSOR:
+                    Professor professor = professorRepository.findByIdentity(tmpAccount.getIdentity()).get();
+                    professor.setHasChairman(false);
+                    professorRepository.save(professor);
+                    return new ResponseEntity<>(String.format("%s 님의 학과장 해지 작입어 완료되었습니다.", professor.getName()), HttpStatus.OK);
+                default:
+                    return new ResponseEntity<>("직원은 회장과 학과장 설정이 필요 없습니다.", HttpStatus.NON_AUTHORITATIVE_INFORMATION);
+            }
+        } else return new ResponseEntity<>("존재하지 않는 회원입니다.", HttpStatus.NON_AUTHORITATIVE_INFORMATION);
     }
 }
