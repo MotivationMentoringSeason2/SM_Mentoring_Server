@@ -16,12 +16,17 @@ import net.skhu.mentoring.repository.ProfessorRepository;
 import net.skhu.mentoring.repository.StudentRepository;
 import net.skhu.mentoring.service.interfaces.AdminService;
 import net.skhu.mentoring.vo.BriefAccountVO;
+import net.skhu.mentoring.vo.EmployeeViewVO;
+import net.skhu.mentoring.vo.ProfessorViewVO;
+import net.skhu.mentoring.vo.StudentViewVO;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 
 import javax.servlet.http.HttpServletRequest;
 import java.security.Principal;
 import java.util.List;
+import java.util.Optional;
 import java.util.stream.Collectors;
 
 @Service
@@ -31,6 +36,9 @@ public class AdminServiceImpl implements AdminService {
 
     @Autowired
     private StudentRepository studentRepository;
+
+    @Autowired
+    private ProfessorRepository professorRepository;
 
     @Autowired
     private EmployeeRepository employeeRepository;
@@ -106,5 +114,30 @@ public class AdminServiceImpl implements AdminService {
                             return BriefAccountVO.builtToAccountVO(account, "-", "-");
                     }
                 }).collect(Collectors.toList());
+    }
+
+    @Override
+    public ResponseEntity<?> fetchAccountView(final Principal principal, final HttpServletRequest request, final Long id) {
+        if(!this.tokenValidation(principal, request)) return ResponseEntity.noContent().build();
+        Optional<Account> account = accountRepository.findById(id);
+        if(account.isPresent()){
+            Account tmpAccount = account.get();
+            switch(tmpAccount.getType()){
+                case UserType.STUDENT :
+                    return ResponseEntity.ok(
+                        StudentViewVO.builtToVO(studentRepository.findByIdentity(tmpAccount.getIdentity()).get())
+                    );
+                case UserType.PROFESSOR :
+                    return ResponseEntity.ok(
+                        ProfessorViewVO.builtToVO(professorRepository.findByIdentity(tmpAccount.getIdentity()).get())
+                    );
+                case UserType.EMPLOYEE :
+                    return ResponseEntity.ok(
+                        EmployeeViewVO.builtToVO(employeeRepository.findByIdentity(tmpAccount.getIdentity()).get())
+                    );
+                default :
+                    return ResponseEntity.noContent().build();
+            }
+        } else return ResponseEntity.noContent().build();
     }
 }

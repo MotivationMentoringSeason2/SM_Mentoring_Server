@@ -23,7 +23,7 @@ public class StudentViewVO {
     private String department;
     private String multiDepartments;
 
-    public StudentViewVO builtToVO(Student student){
+    public static StudentViewVO builtToVO(Student student){
         String multiDepts = student.getMultiDepartments().size() > 0 ?
                 String.join(", ", student.getMultiDepartments().stream()
                                     .map(dep -> dep.getName()).collect(Collectors.toList())) : "없음";
