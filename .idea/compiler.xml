@@ -7,12 +7,18 @@
         <sourceTestOutputDir name="target/generated-test-sources/test-annotations" />
         <outputRelativeToContentRoot value="true" />
         <module name="AccountAPI" />
+        <module name="main (1)" />
+        <module name="main (2)" />
+        <module name="main (3)" />
         <module name="MentoAPI" />
         <module name="NoticeAPI" />
       </profile>
     </annotationProcessing>
     <bytecodeTargetLevel>
       <module name="AccountAPI" target="1.8" />
+      <module name="main (1)" target="1.8" />
+      <module name="main (2)" target="1.8" />
+      <module name="main (3)" target="1.8" />
       <module name="MentoAPI" target="1.8" />
       <module name="NoticeAPI" target="1.8" />
     </bytecodeTargetLevel>
