@@ -209,18 +209,25 @@ public class ExcelUploadServiceImpl implements ExcelUploadService {
 
         XSSFWorkbook workbook=new XSSFWorkbook(is);
 
-        XSSFExcelExtractor extractor=new XSSFExcelExtractor(workbook);
+        XSSFExcelExtractor extractor = new XSSFExcelExtractor(workbook);
         extractor.setFormulasNotResults(false);
         extractor.setIncludeSheetNames(false);
 
-        Sheet sheet=workbook.getSheetAt(0);
-        int rowCount=sheet.getPhysicalNumberOfRows();
+        Sheet sheet = workbook.getSheetAt(0);
+        int rowCount = sheet.getPhysicalNumberOfRows();
+
+        String message = null;
+        HttpStatus status = null;
 
         for(int k=1;k<rowCount;k++) {
             Row row=sheet.getRow(k);
-            if(row.getCell(0)==null) break;
+            if(row.getCell(0) == null) {
+                message = "셀에 있는 값은 모두 입력하셔야 됩니다.";
+                status = HttpStatus.NON_AUTHORITATIVE_INFORMATION;
+                break;
+            }
 
-            Student student=new Student();
+            Student student = new Student();
             student.setStatus(StudentStatus.NORMAL);
             student.setHasChairman(false);
             student.setType(UserType.STUDENT);
@@ -230,42 +237,54 @@ public class ExcelUploadServiceImpl implements ExcelUploadService {
             BigDecimal identity = new BigDecimal(cell.getNumericCellValue());
 
             Optional<Student> tmpStudent = studentRepository.findByIdentity(identity.toString());
-            if(tmpStudent.isPresent())
-                return new ResponseEntity<String>("회원 데이터베이스에 이미 존재하는 학생 이름이 Excel 파일에 있습니다. 다시 시도 바랍니다.", HttpStatus.NON_AUTHORITATIVE_INFORMATION);
+            if(tmpStudent.isPresent()) {
+                message = String.format("회원 데이터베이스에 이미 존재하는 학번 정보가 있습니다. 학번 : %s", identity.toString());
+                status = HttpStatus.NON_AUTHORITATIVE_INFORMATION;
+                break;
+            }
             else {
                 student.setIdentity(identity.toString());
             }
 
             cell=row.getCell(1);
-            student.setName(cell.getRichStringCellValue().toString());
+            student.setName(cell.getRichStringCellValue().getString());
 
             cell=row.getCell(2);
-            student.setGender(cell.getRichStringCellValue().toString().contains("남") ? Gender.MALE : Gender.FEMALE);
+            student.setGender(cell.getRichStringCellValue().getString().contains("남") ? Gender.MALE : Gender.FEMALE);
 
             cell=row.getCell(3);
             student.setGrade((int) cell.getNumericCellValue());
 
             cell=row.getCell(4);
-            student.setName(cell.getRichStringCellValue().toString());
-            student.setPassword(Encryption.encrypt(String.format("a%s", cell.getRichStringCellValue().toString().substring(9, 13)), Encryption.MD5));
+            student.setPhone(cell.getRichStringCellValue().getString());
+            student.setPassword(Encryption.encrypt(String.format("a%s", cell.getRichStringCellValue().getString().substring(7, 11)), Encryption.MD5));
 
             cell=row.getCell(5);
-            student.setEmail(cell.getRichStringCellValue().toString());
+            student.setEmail(cell.getRichStringCellValue().getString());
 
             cell=row.getCell(6);
             Optional<Department> department = departmentRepository.findByName(cell.getRichStringCellValue().toString());
             if(department.isPresent()){
                 student.setDepartment(department.get());
             } else {
-                return new ResponseEntity<String>("실존하지 않는 학과 이름을 입력하셨습니다. 다시 시도 바랍니다.", HttpStatus.NON_AUTHORITATIVE_INFORMATION);
+                message = "실존하지 않는 학과 이름을 입력하셨습니다. 다시 시도 바랍니다.";
+                status = HttpStatus.NON_AUTHORITATIVE_INFORMATION;
+                break;
             }
 
-            if(accountRepository.findByNameAndEmail(student.getName(), student.getEmail()).isPresent())
-                return new ResponseEntity<String>(String.format("다음과 같은 데이터를 가진 회원이 존재합니다. 다시 시도 바랍니다. 이름 : %s - 이메일 : %s", student.getName(), student.getEmail()), HttpStatus.NON_AUTHORITATIVE_INFORMATION);
+            if(accountRepository.findByNameAndEmail(student.getName(), student.getEmail()).isPresent()){
+                message = String.format("다음과 같은 데이터를 가진 회원이 존재합니다. 이 학생은 제외하고 저장 됩니다. 이름 : %s - 이메일 : %s", student.getName(), student.getEmail());
+                status = HttpStatus.NON_AUTHORITATIVE_INFORMATION;
+                break;
+            }
+
             Student std = studentRepository.save(student);
-            if(std.getId() == null)
-                return new ResponseEntity<String>("서버 측 데이터베이스 오류입니다. 다시 시도 바랍니다.", HttpStatus.NON_AUTHORITATIVE_INFORMATION);
+            if(std.getId() == null) {
+                message = "서버 측 데이터베이스 오류입니다. 다시 시도 바랍니다.";
+                status = HttpStatus.FORBIDDEN;
+                break;
+            }
         }
-        return ResponseEntity.ok("Excel 파일를 이용한 학생 업로딩 작업이 완료 되었습니다. 회원 목록으로 이동합니다.");
+        return (message != null && status != null) ? new ResponseEntity<>(message, status) : ResponseEntity.ok("Excel 파일를 이용한 학생 업로딩 작업이 완료 되었습니다. 회원 목록으로 이동합니다.");
     }
 }

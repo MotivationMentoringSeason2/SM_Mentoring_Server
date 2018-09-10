@@ -14,4 +14,6 @@ public interface AdminService {
     List<OptionModel> getOrderByModel(final Principal principal, final HttpServletRequest request);
     List<BriefAccountVO> fetchAccountListWithPagination(final Principal principal, final HttpServletRequest request, final AccountPagination accountPagination);
     ResponseEntity<?> fetchAccountView(final Principal principal, final HttpServletRequest request, final Long id);
+    ResponseEntity<?> executeAppointChairman(final Principal principal, final HttpServletRequest request, final Long id);
+    ResponseEntity<?> executeReleaseChairman(final Principal principal, final HttpServletRequest request, final Long id);
 }
