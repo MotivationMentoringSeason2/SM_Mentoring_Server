@@ -2,10 +2,10 @@
 <project version="4">
   <component name="ProjectModuleManager">
     <modules>
-      <module fileurl="file://$PROJECT_DIR$/AccountAPI/AccountAPI.iml" filepath="$PROJECT_DIR$/AccountAPI/AccountAPI.iml" />
-      <module fileurl="file://$PROJECT_DIR$/MentoAPI/MentoAPI.iml" filepath="$PROJECT_DIR$/MentoAPI/MentoAPI.iml" />
-      <module fileurl="file://$PROJECT_DIR$/NoticeAPI/NoticeAPI.iml" filepath="$PROJECT_DIR$/NoticeAPI/NoticeAPI.iml" />
       <module fileurl="file://$PROJECT_DIR$/SM_Mentoring_Server.iml" filepath="$PROJECT_DIR$/SM_Mentoring_Server.iml" />
+      <module fileurl="file://$PROJECT_DIR$/AccountAPI/main (1).iml" filepath="$PROJECT_DIR$/AccountAPI/main (1).iml" />
+      <module fileurl="file://$PROJECT_DIR$/MentoAPI/main (2).iml" filepath="$PROJECT_DIR$/MentoAPI/main (2).iml" />
+      <module fileurl="file://$PROJECT_DIR$/NoticeAPI/main (3).iml" filepath="$PROJECT_DIR$/NoticeAPI/main (3).iml" />
     </modules>
   </component>
 </project>
