@@ -1,1 +1,5 @@
-.idea
+.idea/
+*.iml
+/AccountAPI/src/main/resources/application.properties
+/MentoAPI/src/main/resources/application.properties
+/NoticeAPI/src/main/resources/application.properties
