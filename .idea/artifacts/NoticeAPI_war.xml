@@ -1,8 +1,0 @@
-<component name="ArtifactManager">
-  <artifact type="war" name="NoticeAPI:war">
-    <output-path>$PROJECT_DIR$/NoticeAPI/target</output-path>
-    <root id="archive" name="main-0.0.1-SNAPSHOT.war">
-      <element id="artifact" artifact-name="NoticeAPI:war exploded" />
-    </root>
-  </artifact>
-</component>
