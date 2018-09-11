@@ -16,12 +16,17 @@ import javax.persistence.JoinColumn;
 import javax.persistence.JoinTable;
 import javax.persistence.ManyToMany;
 import javax.persistence.ManyToOne;
+import javax.persistence.Table;
+import javax.persistence.UniqueConstraint;
 import java.io.Serializable;
 
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
 @Entity
+@Table(
+        uniqueConstraints = @UniqueConstraint(columnNames={"semesterId", "mento"})
+)
 public class Team implements Serializable {
     private static final long serialVersionUID = 1L;
 
