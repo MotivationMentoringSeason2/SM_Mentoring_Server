@@ -22,10 +22,13 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestPart;
 import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.multipart.MultipartFile;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import java.io.IOException;
 import java.security.Principal;
 import java.util.List;
 
@@ -93,6 +96,21 @@ public class CommonRestController {
     @PutMapping("sign_form/employee")
     public ResponseEntity<String> executeUpdateEmployeeSignForm(HttpServletRequest request, Principal principal, @RequestBody EmployeeSignModel employeeSignModel){
         return commonService.executeSavingCurrentEmployeeInfo(principal, request, employeeSignModel);
+    }
+
+    @PutMapping(value = "profile/saving", consumes="multipart/form-data")
+    public ResponseEntity<String> executeSavingProfile(HttpServletRequest request, Principal principal, @RequestPart("file") MultipartFile multipartFile) {
+        try {
+            commonService.executeProfileSaving(multipartFile, principal, request);
+        } catch (IOException e) {
+            return new ResponseEntity<String>("프로필 설정 중에 오류가 발생했습니다.", HttpStatus.NOT_MODIFIED);
+        }
+        return new ResponseEntity<String>("프로필 설정이 완료 되었습니다.", HttpStatus.OK);
+    }
+
+    @DeleteMapping("profile/releasing")
+    public ResponseEntity<String> executeReleasingProfile(HttpServletRequest request, Principal principal) {
+        return commonService.executeProfileReleasing(principal, request);
     }
 
     @DeleteMapping("logout")

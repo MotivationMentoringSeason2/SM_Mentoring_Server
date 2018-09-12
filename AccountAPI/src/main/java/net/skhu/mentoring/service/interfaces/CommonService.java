@@ -25,5 +25,6 @@ public interface CommonService {
     ResponseEntity<String> executeSavingCurrentProfessorInfo(final Principal principal, final HttpServletRequest request, final ProfessorSignModel professorSignModel);
     ResponseEntity<String> executeSavingCurrentEmployeeInfo(final Principal principal, final HttpServletRequest request, final EmployeeSignModel employeeSignModel);
     ResponseEntity<String> executeSavingMyAvailableTime(final Principal principal, final HttpServletRequest request, final List<AvailableTimeModel> timetable);
-    ResponseEntity<String> executeProfileUploading(final MultipartFile file, final Principal principal, final HttpServletRequest request) throws IOException;
+    ResponseEntity<String> executeProfileSaving(final MultipartFile file, final Principal principal, final HttpServletRequest request) throws IOException;
+    ResponseEntity<String> executeProfileReleasing(final Principal principal, final HttpServletRequest request);
 }
