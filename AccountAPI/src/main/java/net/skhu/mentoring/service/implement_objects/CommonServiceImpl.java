@@ -316,7 +316,7 @@ public class CommonServiceImpl implements CommonService {
 
     @Override
     @Transactional
-    public ResponseEntity<String> executeProfileUploading(final MultipartFile file, final Principal principal, final HttpServletRequest request) throws IOException {
+    public ResponseEntity<String> executeProfileSaving(final MultipartFile file, final Principal principal, final HttpServletRequest request) throws IOException {
         if (!this.tokenValidation(principal, request))
             throw new CustomException("유효하지 않은 토큰입니다. 다시 시도 바랍니다.", HttpStatus.UNAUTHORIZED);
 
@@ -342,5 +342,21 @@ public class CommonServiceImpl implements CommonService {
             return new ResponseEntity<>("프로필 사진 설정이 완료 되었습니다.", HttpStatus.OK);
         else
             return new ResponseEntity<>("프로필 사진 설정 중에 서버에서 오류가 발생하였습니다.", HttpStatus.FORBIDDEN);
+    }
+
+    @Override
+    @Transactional
+    public ResponseEntity<String> executeProfileReleasing(final Principal principal, final HttpServletRequest request) {
+        if (!this.tokenValidation(principal, request))
+            throw new CustomException("유효하지 않은 토큰입니다. 다시 시도 바랍니다.", HttpStatus.UNAUTHORIZED);
+
+        Account account = accountRepository.findByIdentity(principal.getName()).get();
+        Optional<Profile> profile = profileRepository.findByAccount(account);
+        if(profile.isPresent()){
+            profileRepository.delete(profile.get());
+            return new ResponseEntity<>("프로필 사진 해제 작업이 완료되었습니다.", HttpStatus.OK);
+        } else {
+            return new ResponseEntity<>("프로필 사진이 존재하지 않아 삭제 작업을 진행하지 않았습니다.", HttpStatus.NON_AUTHORITATIVE_INFORMATION);
+        }
     }
 }
