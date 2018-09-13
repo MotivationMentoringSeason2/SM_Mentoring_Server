@@ -117,7 +117,7 @@ public class IntroduceServiceImpl implements IntroduceService {
     }
 
     @Override
-    public ResponseEntity<String> executeRemovingDetails(List<Long> detailIds) {
+    public ResponseEntity<String> executeRemovingDetails(final List<Long> detailIds) {
         detailRepository.deleteByIdIn(detailIds);
         if(!detailRepository.existsByIdIn(detailIds))
             return ResponseEntity.ok("선택하신 세부 사항의 내용 일부가 삭제되었습니다.");
