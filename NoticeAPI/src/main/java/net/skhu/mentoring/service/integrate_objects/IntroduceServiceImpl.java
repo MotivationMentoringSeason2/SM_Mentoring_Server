@@ -15,6 +15,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 
+import javax.transaction.Transactional;
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
@@ -50,6 +51,7 @@ public class IntroduceServiceImpl implements IntroduceService {
     }
 
     @Override
+    @Transactional
     public ResponseEntity<String> executeCreatingIntro(final String userId, final IntroModel introModel) {
         Intro createIntro = new Intro();
         createIntro.setId(0L);
@@ -60,6 +62,7 @@ public class IntroduceServiceImpl implements IntroduceService {
     }
 
     @Override
+    @Transactional
     public ResponseEntity<String> executeUpdatingIntro(final String userId, final IntroModel introModel) {
         Optional<Intro> intro = introRepository.findById(introModel.getIntroId());
         if(intro.isPresent()){
@@ -72,6 +75,7 @@ public class IntroduceServiceImpl implements IntroduceService {
     }
 
     @Override
+    @Transactional
     public ResponseEntity<String> executeRemovingIntros(final List<Long> introIds) {
         introRepository.deleteByIdIn(introIds);
         if(!introRepository.existsByIdIn(introIds))
@@ -90,6 +94,7 @@ public class IntroduceServiceImpl implements IntroduceService {
     }
 
     @Override
+    @Transactional
     public ResponseEntity<String> executeCreatingDetail(final Long introId, final String userId, final DetailModel detailModel) {
         Optional<Intro> intro = introRepository.findById(introId);
         if(intro.isPresent()) {
@@ -106,6 +111,7 @@ public class IntroduceServiceImpl implements IntroduceService {
     }
 
     @Override
+    @Transactional
     public ResponseEntity<String> executeUpdatingDetail(final String userId, final DetailModel detailModel) {
         if(detailRepository.existsById(detailModel.getDetailId())){
             Detail detail = detailRepository.findById(detailModel.getDetailId()).get();
@@ -117,6 +123,7 @@ public class IntroduceServiceImpl implements IntroduceService {
     }
 
     @Override
+    @Transactional
     public ResponseEntity<String> executeRemovingDetails(final List<Long> detailIds) {
         detailRepository.deleteByIdIn(detailIds);
         if(!detailRepository.existsByIdIn(detailIds))
