@@ -15,6 +15,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 
+import javax.transaction.Transactional;
 import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Optional;
@@ -66,6 +67,7 @@ public class NoticeIntegrateServiceImpl implements NoticeIntegrateService {
     }
 
     @Override
+    @Transactional
     public ResponseEntity<String> executeCreatePost(final PostModel postModel, final String writer) {
         Optional<Type> type = typeRepository.findById(postModel.getTypeId());
         if(type.isPresent()) {
