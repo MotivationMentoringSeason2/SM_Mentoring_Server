@@ -17,17 +17,17 @@ import java.util.List;
 
 @RestController
 @CrossOrigin
-@RequestMapping("/NoticeAPI/calendar")
+@RequestMapping("/NoticeAPI")
 public class CalendarRestController {
     @Autowired
     private CalendarService calendarService;
 
-    @GetMapping("view")
+    @GetMapping("calendar/accordion")
     public ResponseEntity<List<CalendarVO>> fetchCalendarScheduleView(){
         return ResponseEntity.ok(calendarService.fetchCalendarSchedules());
     }
 
-    @PutMapping("update/{userId}")
+    @PutMapping("calendar/{userId}")
     public ResponseEntity<String> executeUpdateCalendarSchedule(@PathVariable String userId, @RequestBody CalendarModel calendarModel){
         return calendarService.executeUpdatingCalendarSchedule(userId, calendarModel);
     }

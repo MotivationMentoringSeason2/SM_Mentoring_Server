@@ -27,17 +27,17 @@ public class IntroduceRestController {
     @Autowired
     private IntroduceService introduceService;
 
-    @GetMapping("view")
+    @GetMapping("accordion")
     public ResponseEntity<List<IntroduceVO>> fetchIntroduceView(){
         return ResponseEntity.ok(introduceService.fetchIntroduceList());
     }
 
-    @GetMapping("intro/view")
+    @GetMapping("intros")
     public ResponseEntity<?> fetchIntroList(){
         return ResponseEntity.ok(introduceService.fetchIntroList());
     }
 
-    @GetMapping("intro/view/{introId}")
+    @GetMapping("intro/{introId}")
     public ResponseEntity<?> fetchIntroView(@PathVariable Long introId){
         IntroVO introVO = introduceService.fetchByIntroId(introId);
         if(introVO == null)
@@ -45,39 +45,39 @@ public class IntroduceRestController {
         else return ResponseEntity.ok(introVO);
     }
 
-    @PostMapping("intro/create/{userId}")
+    @PostMapping("intro/{userId}")
     public ResponseEntity<String> executeCreateIntro(@PathVariable String userId, @RequestBody IntroModel introModel){
         return introduceService.executeCreatingIntro(userId, introModel);
     }
 
-    @PutMapping("intro/update/{userId}")
+    @PutMapping("intro/{userId}")
     public ResponseEntity<String> executeUpdateIntro(@PathVariable String userId, @RequestBody IntroModel introModel){
         return introduceService.executeUpdatingIntro(userId, introModel);
     }
 
-    @DeleteMapping("intro/remove")
+    @DeleteMapping("intros")
     public ResponseEntity<String> executeRemoveIntro(@RequestBody List<Long> introIds){
         return introduceService.executeRemovingIntros(introIds);
     }
 
-    @GetMapping("detail/view/{introId}")
+    @GetMapping("details/{introId}")
     public ResponseEntity<?> fetchDetailList(@PathVariable Long introId){
         List<DetailVO> detailVOs = introduceService.fetchDetailList(introId);
         if(detailVOs != null) return ResponseEntity.ok(detailVOs);
         else return ResponseEntity.noContent().build();
     }
 
-    @PostMapping("detail/create/{introId}/{userId}")
+    @PostMapping("detail/{introId}/{userId}")
     public ResponseEntity<String> executeCreateDetail(@PathVariable Long introId, @PathVariable String userId, @RequestBody DetailModel detailModel){
         return introduceService.executeCreatingDetail(introId, userId, detailModel);
     }
 
-    @PutMapping("detail/update/{userId}")
+    @PutMapping("detail/{userId}")
     public ResponseEntity<String> executeUpdateDetail(@PathVariable String userId, @RequestBody DetailModel detailModel){
         return introduceService.executeUpdatingDetail(userId, detailModel);
     }
 
-    @DeleteMapping("detail/remove")
+    @DeleteMapping("details")
     public ResponseEntity<String> executeRemoveDetails(@RequestBody List<Long> detailIds){
         return introduceService.executeRemovingDetails(detailIds);
     }
