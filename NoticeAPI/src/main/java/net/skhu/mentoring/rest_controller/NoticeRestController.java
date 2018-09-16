@@ -4,15 +4,19 @@ import net.skhu.mentoring.domain.Type;
 import net.skhu.mentoring.model.NoticePagination;
 import net.skhu.mentoring.model.OptionModel;
 import net.skhu.mentoring.model.PostModel;
+import net.skhu.mentoring.service.interfaces.NoticeCommentService;
+import net.skhu.mentoring.service.interfaces.NoticeFileService;
 import net.skhu.mentoring.service.interfaces.NoticeIntegrateService;
 import net.skhu.mentoring.vo.NoticePostBriefVO;
 import net.skhu.mentoring.vo.NoticePostMainVO;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.CrossOrigin;
+import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
@@ -61,7 +65,27 @@ public class NoticeRestController {
     }
 
     @PostMapping("post/create/{userId}")
-    public ResponseEntity<String> executeCreatePost(@PathVariable String userId, @RequestBody PostModel postModel){
-        return noticeIntegrateService.executeCreatePost(postModel, userId);
+    public ResponseEntity<String> executeCreatingPost(@PathVariable String userId, @RequestBody PostModel postModel){
+        return noticeIntegrateService.executeCreatingPost(postModel, userId);
+    }
+
+    @PutMapping("post/update/{postId}")
+    public ResponseEntity<String> executeUpdatingPost(@PathVariable Long postId, @PathVariable String userId, @RequestBody PostModel postModel){
+        return noticeIntegrateService.executeUpdatingPost(postId, postModel);
+    }
+
+    @DeleteMapping("post/remove/{postId}")
+    public ResponseEntity<String> executeRemovingPost(@PathVariable Long postId){
+        return noticeIntegrateService.executeRemovingPost(postId);
+    }
+
+    @DeleteMapping("post/remove/multiple")
+    public ResponseEntity<String> executeRemovingPostMultiple(@RequestBody List<Long> ids){
+        return noticeIntegrateService.executeRemovingMultiplePosts(ids);
+    }
+
+    @DeleteMapping("post/remove/user/{userId}")
+    public ResponseEntity<String> executeRemovingPostByWriter(@PathVariable String userId){
+        return noticeIntegrateService.executeRemovingByUserId(userId);
     }
 }

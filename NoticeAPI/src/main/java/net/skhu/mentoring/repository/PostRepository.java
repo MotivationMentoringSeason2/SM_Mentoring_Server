@@ -50,4 +50,8 @@ public interface PostRepository extends JpaRepository<Post, Long> {
     Page<Post> findByTypeIdAndTitleContains(Long typeId, String title, Pageable pageable);
     Page<Post> findByTypeIdAndContextContains(Long typeId, String context, Pageable pageable);
     Page<Post> findByTypeIdAndUserId(Long typeId, String userId, Pageable pageable);
+    boolean existsByWriter(String writer);
+    boolean existsByIdIn(List<Long> id);
+    void deleteByWriter(String writer);
+    void deleteByIdIn(List<Long> id);
 }

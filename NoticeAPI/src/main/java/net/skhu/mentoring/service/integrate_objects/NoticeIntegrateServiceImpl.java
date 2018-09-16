@@ -88,12 +88,11 @@ public class NoticeIntegrateServiceImpl implements NoticeIntegrateService {
 
     @Override
     @Transactional
-    public ResponseEntity<String> executeUpdatingPost(final Long postId, final PostModel postModel, final String writer) {
+    public ResponseEntity<String> executeUpdatingPost(final Long postId, final PostModel postModel) {
         if(postRepository.existsById(postId)){
             Post updatePost = postRepository.getOne(postId);
             updatePost.setTitle(postModel.getTitle());
             updatePost.setContext(postModel.getContext());
-            updatePost.setWriter(writer);
             updatePost.setWrittenDate(LocalDateTime.now());
             postRepository.save(updatePost);
             return ResponseEntity.ok("게시글 내용 일부가 수정 되었습니다.");

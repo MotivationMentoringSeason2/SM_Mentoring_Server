@@ -18,7 +18,7 @@ public interface NoticeIntegrateService {
     List<NoticePostBriefVO> fetchByPaginationModel(final NoticePagination noticePagination);
     NoticePostMainVO fetchPostById(final Long postId);
     ResponseEntity<String> executeCreatingPost(final PostModel postModel, final String writer);
-    ResponseEntity<String> executeUpdatingPost(final Long postId, final PostModel postModel, final String writer);
+    ResponseEntity<String> executeUpdatingPost(final Long postId, final PostModel postModel);
     ResponseEntity<String> executeRemovingPost(final Long postId);
     ResponseEntity<String> executeRemovingMultiplePosts(final List<Long> ids);
     ResponseEntity<String> executeRemovingByUserId(final String userId);
