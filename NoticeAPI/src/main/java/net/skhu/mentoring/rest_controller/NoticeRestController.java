@@ -30,61 +30,61 @@ public class NoticeRestController {
     @Autowired
     private NoticeIntegrateService noticeIntegrateService;
 
-    @GetMapping("type/view")
+    @GetMapping("types")
     public ResponseEntity<List<Type>> fetchNoticeTypes(){
         return ResponseEntity.ok(noticeIntegrateService.fetchNoticeTypes());
     }
 
-    @GetMapping("type/view/{typeId}")
+    @GetMapping("type/{typeId}")
     public ResponseEntity<Type> fetchNoticeTypeSingle(@PathVariable Long typeId){
         Type type = noticeIntegrateService.fetchTypeById(typeId);
         if(type != null) return ResponseEntity.ok(type);
         else return ResponseEntity.noContent().build();
     }
 
-    @GetMapping("post/search_by")
+    @GetMapping("options/sb_elements")
     public ResponseEntity<List<OptionModel>> fetchPostSearchByOptions(){
         return ResponseEntity.ok(noticeIntegrateService.fetchSearchBy());
     }
 
-    @GetMapping("post/order_by")
+    @GetMapping("options/ob_elements")
     public ResponseEntity<List<OptionModel>> fetchPostOrderByOptions(){
         return ResponseEntity.ok(noticeIntegrateService.fetchOrderBy());
     }
 
-    @GetMapping("post/view")
+    @GetMapping("posts")
     public ResponseEntity<List<NoticePostBriefVO>> fetchPostListByPaginationModel(NoticePagination noticePagination){
         return ResponseEntity.ok(noticeIntegrateService.fetchByPaginationModel(noticePagination));
     }
 
-    @GetMapping("post/view/{postId}")
+    @GetMapping("post/{postId}")
     public ResponseEntity<NoticePostMainVO> fetchPostViewByPostId(@PathVariable Long postId){
         NoticePostMainVO postVO = noticeIntegrateService.fetchPostById(postId);
         if(postVO != null) return ResponseEntity.ok(postVO);
         else return ResponseEntity.noContent().build();
     }
 
-    @PostMapping("post/create/{userId}")
+    @PostMapping("post/{userId}")
     public ResponseEntity<String> executeCreatingPost(@PathVariable String userId, @RequestBody PostModel postModel){
         return noticeIntegrateService.executeCreatingPost(postModel, userId);
     }
 
-    @PutMapping("post/update/{postId}")
+    @PutMapping("post/{postId}")
     public ResponseEntity<String> executeUpdatingPost(@PathVariable Long postId, @PathVariable String userId, @RequestBody PostModel postModel){
         return noticeIntegrateService.executeUpdatingPost(postId, postModel);
     }
 
-    @DeleteMapping("post/remove/{postId}")
+    @DeleteMapping("post/{postId}")
     public ResponseEntity<String> executeRemovingPost(@PathVariable Long postId){
         return noticeIntegrateService.executeRemovingPost(postId);
     }
 
-    @DeleteMapping("post/remove/multiple")
+    @DeleteMapping("posts")
     public ResponseEntity<String> executeRemovingPostMultiple(@RequestBody List<Long> ids){
         return noticeIntegrateService.executeRemovingMultiplePosts(ids);
     }
 
-    @DeleteMapping("post/remove/user/{userId}")
+    @DeleteMapping("posts/{userId}")
     public ResponseEntity<String> executeRemovingPostByWriter(@PathVariable String userId){
         return noticeIntegrateService.executeRemovingByUserId(userId);
     }

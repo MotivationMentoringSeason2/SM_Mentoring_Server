@@ -22,12 +22,12 @@ public class CalendarRestController {
     @Autowired
     private CalendarService calendarService;
 
-    @GetMapping("view")
+    @GetMapping("accordion")
     public ResponseEntity<List<CalendarVO>> fetchCalendarScheduleView(){
         return ResponseEntity.ok(calendarService.fetchCalendarSchedules());
     }
 
-    @PutMapping("update/{userId}")
+    @PutMapping("{userId}")
     public ResponseEntity<String> executeUpdateCalendarSchedule(@PathVariable String userId, @RequestBody CalendarModel calendarModel){
         return calendarService.executeUpdatingCalendarSchedule(userId, calendarModel);
     }

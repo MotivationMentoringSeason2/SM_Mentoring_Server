@@ -18,37 +18,37 @@ import java.util.List;
 
 @RestController
 @CrossOrigin
-@RequestMapping("/NoticeAPI/notice/comment")
+@RequestMapping("/NoticeAPI/notice")
 public class CommentRestController {
     @Autowired
     private NoticeCommentService noticeCommentService;
 
-    @GetMapping("view/{postId}")
+    @GetMapping("comments/{postId}")
     public ResponseEntity<?> fetchByNoticePostId(@PathVariable Long postId){
         return ResponseEntity.ok(noticeCommentService.fetchCommentListByPostId(postId));
     }
 
-    @PostMapping("create/{userId}")
+    @PostMapping("comment/{userId}")
     public ResponseEntity<String> executeCreatingNoticeComment(@PathVariable String userId, @RequestBody CommentModel commentModel){
         return noticeCommentService.executeCreatingComment(userId, commentModel);
     }
 
-    @PutMapping("update/{commentId}")
+    @PutMapping("comment/{commentId}")
     public ResponseEntity<String> executeUpdatingNoticeComment(@PathVariable Long commentId, @RequestBody CommentModel commentModel){
         return noticeCommentService.executeUpdatingComment(commentId, commentModel);
     }
 
-    @DeleteMapping("remove/{commentId}")
+    @DeleteMapping("comment/{commentId}")
     public ResponseEntity<String> executeRemovingNoticeComment(@PathVariable Long commentId){
         return noticeCommentService.executeRemovingComment(commentId);
     }
 
-    @DeleteMapping("remove/multiple")
+    @DeleteMapping("comments")
     public ResponseEntity<String> executeRemovingNoticeCommentMultiple(@RequestBody List<Long> ids){
         return noticeCommentService.executeRemovingMultipleComments(ids);
     }
 
-    @DeleteMapping("remove/user/{userId}")
+    @DeleteMapping("comments/{userId}")
     public ResponseEntity<String> executeRemovingNoticeCommentByUserId(@PathVariable String userId){
         return noticeCommentService.executeRemovingByUserId(userId);
     }
