@@ -68,7 +68,7 @@ public class NoticeIntegrateServiceImpl implements NoticeIntegrateService {
 
     @Override
     @Transactional
-    public ResponseEntity<String> executeCreatePost(final PostModel postModel, final String writer) {
+    public ResponseEntity<String> executeCreatingPost(final PostModel postModel, final String writer) {
         Optional<Type> type = typeRepository.findById(postModel.getTypeId());
         if(type.isPresent()) {
             Post createPost = new Post();
@@ -84,5 +84,52 @@ public class NoticeIntegrateServiceImpl implements NoticeIntegrateService {
         } else {
             return new ResponseEntity<>("게시글을 저장하기 위한 게시판 타입이 불분명합니다.", HttpStatus.NON_AUTHORITATIVE_INFORMATION);
         }
+    }
+
+    @Override
+    @Transactional
+    public ResponseEntity<String> executeUpdatingPost(final Long postId, final PostModel postModel, final String writer) {
+        if(postRepository.existsById(postId)){
+            Post updatePost = postRepository.getOne(postId);
+            updatePost.setTitle(postModel.getTitle());
+            updatePost.setContext(postModel.getContext());
+            updatePost.setWriter(writer);
+            updatePost.setWrittenDate(LocalDateTime.now());
+            postRepository.save(updatePost);
+            return ResponseEntity.ok("게시글 내용 일부가 수정 되었습니다.");
+        } else {
+            return new ResponseEntity<>("게시글이 존재하지 않아 수정 작업이 진행되지 않았습니다.", HttpStatus.NON_AUTHORITATIVE_INFORMATION);
+        }
+    }
+
+    @Override
+    @Transactional
+    public ResponseEntity<String> executeRemovingPost(final Long postId) {
+        if(postRepository.existsById(postId)){
+            postRepository.deleteById(postId);
+            return ResponseEntity.ok("선택하신 게시글이 삭제 되었습니다.");
+        } else {
+            return new ResponseEntity<>("게시글이 존재하지 않아 삭제 작업이 진행되지 않았습니다.", HttpStatus.NON_AUTHORITATIVE_INFORMATION);
+        }
+    }
+
+    @Override
+    @Transactional
+    public ResponseEntity<String> executeRemovingMultiplePosts(final List<Long> ids) {
+        if(postRepository.existsByIdIn(ids)){
+            postRepository.deleteByIdIn(ids);
+            return ResponseEntity.ok("선택하신 게시글이 삭제 되었습니다.");
+        } else {
+            return new ResponseEntity<>("게시글이 존재하지 않아 삭제 작업이 진행되지 않았습니다.", HttpStatus.NON_AUTHORITATIVE_INFORMATION);
+        }
+    }
+
+    @Override
+    @Transactional
+    public ResponseEntity<String> executeRemovingByUserId(final String userId) {
+        if(postRepository.existsByWriter(userId)){
+            postRepository.deleteByWriter(userId);
+            return ResponseEntity.ok(String.format("삭제 하려는 회원 %s의 게시글이 모두 삭제 되었습니다.", userId));
+        } else return ResponseEntity.ok(String.format("삭제 하려는 회원 %s의 게시글이 존재하지 않습니다.", userId));
     }
 }
