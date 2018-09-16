@@ -32,7 +32,7 @@ public class IntroduceRestController {
         return ResponseEntity.ok(introduceService.fetchIntroduceList());
     }
 
-    @GetMapping("intro")
+    @GetMapping("intros")
     public ResponseEntity<?> fetchIntroList(){
         return ResponseEntity.ok(introduceService.fetchIntroList());
     }
@@ -60,7 +60,7 @@ public class IntroduceRestController {
         return introduceService.executeRemovingIntros(introIds);
     }
 
-    @GetMapping("detail/{introId}")
+    @GetMapping("details/{introId}")
     public ResponseEntity<?> fetchDetailList(@PathVariable Long introId){
         List<DetailVO> detailVOs = introduceService.fetchDetailList(introId);
         if(detailVOs != null) return ResponseEntity.ok(detailVOs);
