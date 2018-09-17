@@ -60,9 +60,15 @@ public class NoticeIntegrateServiceImpl implements NoticeIntegrateService {
     }
 
     @Override
+    @Transactional
     public NoticePostMainVO fetchPostById(final Long postId) {
         Optional<Post> post = postRepository.findById(postId);
-        if(post.isPresent()) return NoticePostMainVO.builtToVO(post.get());
+        if(post.isPresent()) {
+            Post viewPost = post.get();
+            viewPost.setViews(viewPost.getViews() + 1);
+            postRepository.save(viewPost);
+            return NoticePostMainVO.builtToVO(viewPost);
+        }
         else return null;
     }
 
