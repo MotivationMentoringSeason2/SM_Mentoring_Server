@@ -9,6 +9,7 @@ import java.util.List;
 
 public interface SurveyService {
     List<Survey> fetchSurveyListByType(final SurveyType type);
+    Survey fetchSurveyById(final Long surveyId);
     ResponseEntity<String> executeSurveyCreating(final String writer, final SurveyModel surveyModel);
     ResponseEntity<String> executeSurveyUpdating(final Long surveyId, final SurveyModel surveyModel) ;
     ResponseEntity<String> executeSurveyRemoving(final Long surveyId);

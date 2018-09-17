@@ -28,6 +28,13 @@ public class SurveyServiceImpl implements SurveyService {
     }
 
     @Override
+    public Survey fetchSurveyById(final Long surveyId) {
+        Optional<Survey> survey = surveyRepository.findById(surveyId);
+        if(survey.isPresent()) return survey.get();
+        else return null;
+    }
+
+    @Override
     @Transactional
     public ResponseEntity<String> executeSurveyCreating(final String writer, final SurveyModel surveyModel) {
         Survey createSurvey = new Survey();
