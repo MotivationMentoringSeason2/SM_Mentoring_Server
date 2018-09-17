@@ -28,8 +28,8 @@ public class Schedule implements Serializable {
     private Long id;
 
     @ManyToOne
-    @Column(name = "scheduleId")
-    private Schedule schedule;
+    @Column(name = "teamId")
+    private Team team;
 
     @Column(nullable = false)
     private LocalDateTime startDate;
