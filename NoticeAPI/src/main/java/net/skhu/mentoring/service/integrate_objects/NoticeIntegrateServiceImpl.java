@@ -47,7 +47,6 @@ public class NoticeIntegrateServiceImpl implements NoticeIntegrateService {
     @Override
     public Type fetchTypeById(final Long typeId) {
         Optional<Type> type = typeRepository.findById(typeId);
-        System.out.println(type.get());
         if(type.isPresent())
             return type.get();
         else return null;
@@ -58,7 +57,6 @@ public class NoticeIntegrateServiceImpl implements NoticeIntegrateService {
         return postRepository.findAll(noticePagination).stream()
                 .map(post -> NoticePostBriefVO.builtToVO(post))
                 .collect(Collectors.toList());
-
     }
 
     @Override

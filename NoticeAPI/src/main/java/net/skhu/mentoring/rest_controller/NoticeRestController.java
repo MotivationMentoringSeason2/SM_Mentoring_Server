@@ -7,6 +7,7 @@ import net.skhu.mentoring.model.PostModel;
 import net.skhu.mentoring.service.interfaces.NoticeCommentService;
 import net.skhu.mentoring.service.interfaces.NoticeFileService;
 import net.skhu.mentoring.service.interfaces.NoticeIntegrateService;
+import net.skhu.mentoring.vo.NoticeListIntegrateVO;
 import net.skhu.mentoring.vo.NoticePostBriefVO;
 import net.skhu.mentoring.vo.NoticePostMainVO;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -53,8 +54,8 @@ public class NoticeRestController {
     }
 
     @GetMapping("posts")
-    public ResponseEntity<List<NoticePostBriefVO>> fetchPostListByPaginationModel(NoticePagination noticePagination){
-        return ResponseEntity.ok(noticeIntegrateService.fetchByPaginationModel(noticePagination));
+    public ResponseEntity<NoticeListIntegrateVO> fetchPostListByPaginationModel(NoticePagination noticePagination){
+        return ResponseEntity.ok(NoticeListIntegrateVO.buildToVO(noticeIntegrateService.fetchByPaginationModel(noticePagination), noticePagination));
     }
 
     @GetMapping("post/{postId}")

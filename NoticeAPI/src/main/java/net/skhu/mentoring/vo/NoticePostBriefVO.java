@@ -14,10 +14,9 @@ public class NoticePostBriefVO {
     private Long id;
     private String title;
     private String writer;
-
     private int views;
     private LocalDateTime writtenDate;
     public static NoticePostBriefVO builtToVO(Post post){
-        return new NoticePostBriefVO(post.getId(), post.getTitle(), post.getWriter(),post.getViews(),post.getWrittenDate());
+        return new NoticePostBriefVO(post.getId(), post.getTitle(), post.getWriter(), post.getViews(), post.getWrittenDate());
     }
 }
