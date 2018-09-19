@@ -77,5 +77,6 @@ public interface AccountRepository extends AccountBaseRepository<Account> {
 
     Optional<Account> findByNameAndEmail(String name, String email);
     Optional<Account> findByIdentity(String identity);
+    Optional<Account> findByIdentityAndEmail(String name, String email);
     boolean existsByIdentity(String identity);
 }

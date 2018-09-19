@@ -9,6 +9,7 @@ import net.skhu.mentoring.enumeration.StudentStatus;
 import net.skhu.mentoring.enumeration.UserType;
 import net.skhu.mentoring.model.EmployeeSignModel;
 import net.skhu.mentoring.model.IdentityFindModel;
+import net.skhu.mentoring.model.PasswordFindModel;
 import net.skhu.mentoring.model.ProfessorSignModel;
 import net.skhu.mentoring.model.StudentSignModel;
 import net.skhu.mentoring.repository.AccountRepository;
@@ -162,5 +163,15 @@ public class GuestServiceImpl implements GuestService {
             return new ResponseEntity<>("직원 회원 가입 과정이 완료 되었습니다. 로그인을 진행하시면 됩니다.", HttpStatus.CREATED);
         else
             return new ResponseEntity<>("직원 회원 가입 도중에 서버에서 문제가 발생하였습니다. 최대한 빠른 조치를 취하겠습니다.", HttpStatus.FORBIDDEN);
+    }
+
+    @Override
+    public ResponseEntity<String> fetchFindAccountPassword(PasswordFindModel PasswordFindModel) {
+        Optional<Account> account = accountRepository.findByIdentityAndEmail(PasswordFindModel.getIdentity() , PasswordFindModel.getEmail());
+        if(!account.isPresent()){
+            return new ResponseEntity<>("존재하지 않는 회원 정보입니다.", HttpStatus.NON_AUTHORITATIVE_INFORMATION);
+        } else {
+                return null;
+        }
     }
 }
