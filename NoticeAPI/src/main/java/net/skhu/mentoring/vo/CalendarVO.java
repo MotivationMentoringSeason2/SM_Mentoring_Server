@@ -11,11 +11,13 @@ import java.time.LocalDate;
 @NoArgsConstructor
 @AllArgsConstructor
 public class CalendarVO {
+    private Long id;
+    private String writer;
     private String context;
     private LocalDate startDate;
     private LocalDate endDate;
 
     public static CalendarVO builtToVO(Calendar calendar){
-        return new CalendarVO(calendar.getContext(), calendar.getStartDate(), calendar.getEndDate());
+        return new CalendarVO(calendar.getId(), calendar.getWriter(), calendar.getContext(), calendar.getStartDate(), calendar.getEndDate());
     }
 }
