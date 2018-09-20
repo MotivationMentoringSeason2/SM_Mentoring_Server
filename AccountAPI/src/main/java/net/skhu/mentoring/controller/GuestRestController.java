@@ -3,6 +3,7 @@ package net.skhu.mentoring.controller;
 import net.skhu.mentoring.exception.CustomException;
 import net.skhu.mentoring.model.EmployeeSignModel;
 import net.skhu.mentoring.model.IdentityFindModel;
+import net.skhu.mentoring.model.PasswordFindModel;
 import net.skhu.mentoring.model.LoginModel;
 import net.skhu.mentoring.model.ProfessorSignModel;
 import net.skhu.mentoring.model.StudentSignModel;
@@ -59,5 +60,9 @@ public class GuestRestController {
         return guestService.employeeSignMessage(employeeSignModel);
     }
 
+    @PostMapping("account/password")
+    public ResponseEntity<String> findPassword(@RequestBody PasswordFindModel passwordFindModel){
+        return guestService.fetchFindAccountPassword(passwordFindModel);
+    }
 
 }
