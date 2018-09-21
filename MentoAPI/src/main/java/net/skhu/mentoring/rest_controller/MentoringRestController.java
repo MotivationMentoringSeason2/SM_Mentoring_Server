@@ -1,8 +1,13 @@
 package net.skhu.mentoring.rest_controller;
 
+import net.skhu.mentoring.enumeration.ResultStatus;
+import net.skhu.mentoring.model.MentiApplicationModel;
 import net.skhu.mentoring.model.MentoAppicationModel;
 import net.skhu.mentoring.service.interfaces.MentiService;
 import net.skhu.mentoring.service.interfaces.TeamService;
+import net.skhu.mentoring.vo.MentiAppVO;
+import net.skhu.mentoring.vo.MentoVO;
+import net.skhu.mentoring.vo.PersonVO;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.CrossOrigin;
@@ -13,7 +18,12 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestPart;
 import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.multipart.MultipartFile;
+
+import java.io.IOException;
+import java.util.List;
 
 @RestController
 @CrossOrigin
@@ -26,52 +36,70 @@ public class MentoringRestController {
     private MentiService mentiService;
 
     @GetMapping("teams/{semesterId}")
-    public ResponseEntity<String> fetchTeamListBySemesterId(@PathVariable Long semesterId){
-        return ResponseEntity.ok("학기 별 멘토링 팀을 불러옵니다.");
+    public ResponseEntity<?> fetchTeamListBySemesterId(@PathVariable Long semesterId){
+        List<MentoVO> mentoVOs = teamService.fetchMentoListBySemesterId(semesterId);
+        return mentoVOs != null ? ResponseEntity.ok(mentoVOs) : ResponseEntity.noContent().build();
+    }
+
+    @GetMapping("teams/status/{status}")
+    public ResponseEntity<List<MentoVO>> fetchMentoListByCurrentSemester(@PathVariable ResultStatus status){
+        List<MentoVO> mentoVOs = teamService.fetchMentoListByStatus(status);
+        return mentoVOs != null ? ResponseEntity.ok(mentoVOs) : ResponseEntity.noContent().build();
     }
 
     @GetMapping("team/{teamId}")
-    public ResponseEntity<String> fetchTeamById(@PathVariable Long teamId){
-        return ResponseEntity.ok("팀 번호로 팀 정보(멘토링 정보)를 가져옵니다.");
+    public ResponseEntity<MentoVO> fetchTeamById(@PathVariable Long teamId){
+        MentoVO mentoVO = teamService.fetchMentoInfoByTeamId(teamId);
+        return mentoVO != null ? ResponseEntity.ok(mentoVO) : ResponseEntity.noContent().build();
     }
 
     @GetMapping("team/persons/{teamId}")
-    public ResponseEntity<String> fetchTeamPersonById(@PathVariable Long teamId){
-        return ResponseEntity.ok("팀 번호로 멘토와 멘티 아이디를 가져옵니다.");
+    public ResponseEntity<PersonVO> fetchTeamPersonById(@PathVariable Long teamId){
+        return ResponseEntity.ok(teamService.fetchMentoringTeamPersonByTeamId(teamId));
     }
 
-    @PostMapping("team")
-    public ResponseEntity<String> executeMentoApplicate(@RequestBody MentoAppicationModel mentoAppicationModel){
-        return ResponseEntity.ok("멘토 신청이 완료 되었습니다.");
+    @PostMapping(value = "team/{mento}", consumes = {"multipart/form-data"})
+    public ResponseEntity<String> executeMentoApplicate(@PathVariable String mento, @RequestPart("applicationModel") MentoAppicationModel mentoAppicationModel, @RequestPart("advFile") MultipartFile advFile) throws IOException {
+        return teamService.executeMentoApplicate(mentoAppicationModel, advFile, mento);
     }
 
-    @PutMapping("team/{teamId}")
-    public ResponseEntity<String> executeMentoApplicateUpdating(@PathVariable Long teamId, @RequestBody MentoAppicationModel mentoAppicationModel){
-        return ResponseEntity.ok("멘토 신청 내역이 수정 되었습니다.");
+    @PutMapping(value = "team/{mento}", consumes = {"multipart/form-data"})
+    public ResponseEntity<String> executeMentoApplicateUpdating(@PathVariable String mento, @RequestPart("applicationModel") MentoAppicationModel mentoAppicationModel, @RequestPart("advFile") MultipartFile advFile) throws IOException{
+        return teamService.executeUpdateMentoApplicate(mentoAppicationModel, advFile, mento);
     }
 
-    @DeleteMapping("team/{teamId}")
-    public ResponseEntity<String> executeMentoApplicateReleasing(@PathVariable Long teamId){
-        return ResponseEntity.ok("멘토 신청이 취소 되었습니다.");
+    @PutMapping("team/{teamId}/status/{status}")
+    public ResponseEntity<String> executeMentoStatusUpdating(@PathVariable Long teamId, @PathVariable ResultStatus status){
+        return teamService.executeUpdateMentoStatus(teamId, status);
+    }
+
+    @DeleteMapping("team/cancellation/{mento}")
+    public ResponseEntity<String> executeCancelingCurrentSemester(@PathVariable String mento){
+        return teamService.executeCancelMentoApplicate(mento);
     }
 
     @DeleteMapping("team/{mento}")
     public ResponseEntity<String> executeRemovingByTeamMento(@PathVariable String mento){
-        return ResponseEntity.ok("탈퇴한 팀장 아이디로 멘토 정보를 없앱니다.");
+        return teamService.executeRemoveMentoRegister(mento);
     }
 
-    @PostMapping("menti/{teamId}")
-    public ResponseEntity<String> executeMentiApplicate(@PathVariable Long teamId){
-        return ResponseEntity.ok("멘티 신청이 완료 되었습니다.");
+    @GetMapping("menti/infos/{userId}")
+    public ResponseEntity<List<MentiAppVO>> fettchMentiAppInfos(@PathVariable String userId){
+        return ResponseEntity.ok(mentiService.fetchCurrentMentiAppInfo(userId));
     }
 
-    @DeleteMapping("menti/{mentiId}")
-    public ResponseEntity<String> executeMentiApplicateReleasing(@PathVariable Long mentiId){
-        return ResponseEntity.ok("멘티 신청이 취소 되었습니다.");
+    @PostMapping("menti")
+    public ResponseEntity<String> executeMentiApplicate(@RequestBody MentiApplicationModel mentiApplicationModel){
+        return mentiService.executeCreateMentiApplication(mentiApplicationModel);
+    }
+
+    @DeleteMapping("menti")
+    public ResponseEntity<String> executeMentiApplicateReleasing(@RequestBody MentiApplicationModel mentiApplicationModel){
+        return mentiService.executeRemoveMentiApplication(mentiApplicationModel);
     }
 
     @DeleteMapping("menti/{userId}")
     public ResponseEntity<String> executeRemovingByTeamMenti(@PathVariable String userId){
-        return ResponseEntity.ok("탈퇴한 멘티 아이디로 멘티 신청 내역을 없앱니다.");
+        return mentiService.executeRemoveByMentiUser(userId);
     }
 }
