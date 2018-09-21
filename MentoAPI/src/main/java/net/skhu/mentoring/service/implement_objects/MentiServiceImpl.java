@@ -16,6 +16,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 
 import javax.transaction.Transactional;
+import java.util.Comparator;
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
@@ -38,6 +39,7 @@ public class MentiServiceImpl implements MentiService {
             List<Team> teams = teamRepository.findBySemesterAndStatus(semester.get(), ResultStatus.LOADING);
             return teams.stream()
                     .map(team -> MentiAppVO.builtToVO(team, (int) mentiRepository.countByTeam(team), mentiRepository.existsByUserIdAndTeam(userId, team)))
+                    .sorted(Comparator.comparing(MentiAppVO::getHasApplicated, Comparator.reverseOrder()))
                     .collect(Collectors.toList());
         } else return null;
     }

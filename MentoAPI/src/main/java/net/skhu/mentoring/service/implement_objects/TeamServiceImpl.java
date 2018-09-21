@@ -5,7 +5,7 @@ import net.skhu.mentoring.domain.Semester;
 import net.skhu.mentoring.domain.Team;
 import net.skhu.mentoring.domain.TeamAdvertiseFile;
 import net.skhu.mentoring.enumeration.ResultStatus;
-import net.skhu.mentoring.model.MentoAppicationModel;
+import net.skhu.mentoring.model.MentoApplicationModel;
 import net.skhu.mentoring.repository.MentiRepository;
 import net.skhu.mentoring.repository.SemesterRepository;
 import net.skhu.mentoring.repository.SubjectRepository;
@@ -112,20 +112,30 @@ public class TeamServiceImpl implements TeamService {
     }
 
     @Override
+    public MentoApplicationModel fetchUpdateMentoApplicationModel(final String mento) {
+        Optional<Semester> semester = semesterRepository.findByCurrentSemester();
+        if(semester.isPresent()) {
+            Optional<Team> team = teamRepository.findByMentoAndSemester(mento, semester.get());
+            if(team.isPresent()) return MentoApplicationModel.builtToVO(team.get());
+            else return null;
+        } else return null;
+    }
+
+    @Override
     @Transactional
-    public ResponseEntity<String> executeMentoApplicate(final MentoAppicationModel mentoAppicationModel, final MultipartFile advFile, final String mento) throws IOException {
+    public ResponseEntity<String> executeMentoApplicate(final MentoApplicationModel mentoApplicationModel, final MultipartFile advFile, final String mento) throws IOException {
         Optional<Semester> semester = semesterRepository.findByCurrentSemester();
         if(semester.isPresent()) {
             if(!teamRepository.existsByMentoAndSemester(mento, semester.get())){
                 Team team = new Team(0L,
                     semester.get(),
                     mento,
-                    mentoAppicationModel.getTeamName(),
-                    mentoAppicationModel.getPerson(),
-                    mentoAppicationModel.getAdvertise(),
-                    mentoAppicationModel.getQualify(),
+                    mentoApplicationModel.getTeamName(),
+                    mentoApplicationModel.getPerson(),
+                    mentoApplicationModel.getAdvertise(),
+                    mentoApplicationModel.getQualify(),
                     ResultStatus.LOADING,
-                    mentoAppicationModel.getSubjects().stream()
+                    mentoApplicationModel.getSubjects().stream()
                         .map(sId -> subjectRepository.findById(sId))
                         .filter(subject -> subject.isPresent())
                         .map(subject -> subject.get())
@@ -143,22 +153,22 @@ public class TeamServiceImpl implements TeamService {
 
     @Override
     @Transactional
-    public ResponseEntity<String> executeUpdateMentoApplicate(final MentoAppicationModel mentoAppicationModel, final MultipartFile advFile, final String mento) throws IOException {
+    public ResponseEntity<String> executeUpdateMentoApplicate(final MentoApplicationModel mentoApplicationModel, final MultipartFile advFile, final String mento) throws IOException {
         Optional<Semester> semester = semesterRepository.findByCurrentSemester();
         if(semester.isPresent()) {
             Optional<Team> team = teamRepository.findByMentoAndSemester(mento, semester.get());
             if(team.isPresent()) {
                 Team updateTeam = team.get();
-                updateTeam.setSubjects(mentoAppicationModel.getSubjects().stream()
+                updateTeam.setSubjects(mentoApplicationModel.getSubjects().stream()
                     .map(sId -> subjectRepository.findById(sId))
                     .filter(subject -> subject.isPresent())
                     .map(subject -> subject.get())
                     .collect(Collectors.toList())
                 );
-                updateTeam.setQualify(mentoAppicationModel.getQualify());
-                updateTeam.setName(mentoAppicationModel.getTeamName());
-                updateTeam.setPerson(mentoAppicationModel.getPerson());
-                updateTeam.setAdvertise(mentoAppicationModel.getAdvertise());
+                updateTeam.setQualify(mentoApplicationModel.getQualify());
+                updateTeam.setName(mentoApplicationModel.getTeamName());
+                updateTeam.setPerson(mentoApplicationModel.getPerson());
+                updateTeam.setAdvertise(mentoApplicationModel.getAdvertise());
                 updateTeam.setStatus(ResultStatus.LOADING);
                 updateTeam.setMento(mento);
                 teamRepository.save(updateTeam);
