@@ -2,7 +2,7 @@ package net.skhu.mentoring.rest_controller;
 
 import net.skhu.mentoring.enumeration.ResultStatus;
 import net.skhu.mentoring.model.MentiApplicationModel;
-import net.skhu.mentoring.model.MentoAppicationModel;
+import net.skhu.mentoring.model.MentoApplicationModel;
 import net.skhu.mentoring.service.interfaces.MentiService;
 import net.skhu.mentoring.service.interfaces.TeamService;
 import net.skhu.mentoring.vo.MentiAppVO;
@@ -58,14 +58,20 @@ public class MentoringRestController {
         return ResponseEntity.ok(teamService.fetchMentoringTeamPersonByTeamId(teamId));
     }
 
+    @GetMapping("team/model/{mento}")
+    public ResponseEntity<MentoApplicationModel> fetchUpdateMentoApplicationModel(@PathVariable String mento){
+        MentoApplicationModel mentoApplicationModel = teamService.fetchUpdateMentoApplicationModel(mento);
+        return mentoApplicationModel != null ? ResponseEntity.ok(mentoApplicationModel) : ResponseEntity.noContent().build();
+    }
+
     @PostMapping(value = "team/{mento}", consumes = {"multipart/form-data"})
-    public ResponseEntity<String> executeMentoApplicate(@PathVariable String mento, @RequestPart("applicationModel") MentoAppicationModel mentoAppicationModel, @RequestPart("advFile") MultipartFile advFile) throws IOException {
-        return teamService.executeMentoApplicate(mentoAppicationModel, advFile, mento);
+    public ResponseEntity<String> executeMentoApplicate(@PathVariable String mento, @RequestPart("applicationModel") MentoApplicationModel mentoApplicationModel, @RequestPart("advFile") MultipartFile advFile) throws IOException {
+        return teamService.executeMentoApplicate(mentoApplicationModel, advFile, mento);
     }
 
     @PutMapping(value = "team/{mento}", consumes = {"multipart/form-data"})
-    public ResponseEntity<String> executeMentoApplicateUpdating(@PathVariable String mento, @RequestPart("applicationModel") MentoAppicationModel mentoAppicationModel, @RequestPart("advFile") MultipartFile advFile) throws IOException{
-        return teamService.executeUpdateMentoApplicate(mentoAppicationModel, advFile, mento);
+    public ResponseEntity<String> executeMentoApplicateUpdating(@PathVariable String mento, @RequestPart("applicationModel") MentoApplicationModel mentoApplicationModel, @RequestPart("advFile") MultipartFile advFile) throws IOException{
+        return teamService.executeUpdateMentoApplicate(mentoApplicationModel, advFile, mento);
     }
 
     @PutMapping("team/{teamId}/status/{status}")
