@@ -1,7 +1,7 @@
 package net.skhu.mentoring.service.interfaces;
 
 import net.skhu.mentoring.enumeration.ResultStatus;
-import net.skhu.mentoring.model.MentoAppicationModel;
+import net.skhu.mentoring.model.MentoApplicationModel;
 import net.skhu.mentoring.vo.MentoVO;
 import net.skhu.mentoring.vo.PersonVO;
 import org.springframework.http.ResponseEntity;
@@ -15,9 +15,10 @@ public interface TeamService {
     List<MentoVO> fetchMentoListByStatus(final ResultStatus status);
     MentoVO fetchMentoInfoByTeamId(final Long teamId);
     PersonVO fetchMentoringTeamPersonByTeamId(final Long teamId);
+    MentoApplicationModel fetchUpdateMentoApplicationModel(final String mento);
 
-    ResponseEntity<String> executeMentoApplicate(final MentoAppicationModel mentoAppicationModel, final MultipartFile advFile, final String mento) throws IOException;
-    ResponseEntity<String> executeUpdateMentoApplicate(final MentoAppicationModel mentoAppicationModel, final MultipartFile advFile, final String mento) throws IOException;
+    ResponseEntity<String> executeMentoApplicate(final MentoApplicationModel mentoApplicationModel, final MultipartFile advFile, final String mento) throws IOException;
+    ResponseEntity<String> executeUpdateMentoApplicate(final MentoApplicationModel mentoApplicationModel, final MultipartFile advFile, final String mento) throws IOException;
     ResponseEntity<String> executeUpdateMentoStatus(final Long teamId, final ResultStatus status);
     ResponseEntity<String> executeCancelMentoApplicate(final String mento);
     ResponseEntity<String> executeRemoveMentoRegister(final String mento);
