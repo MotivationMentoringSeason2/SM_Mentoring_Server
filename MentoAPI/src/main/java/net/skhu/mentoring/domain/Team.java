@@ -19,6 +19,7 @@ import javax.persistence.ManyToOne;
 import javax.persistence.Table;
 import javax.persistence.UniqueConstraint;
 import java.io.Serializable;
+import java.util.List;
 
 @Data
 @NoArgsConstructor
@@ -59,5 +60,5 @@ public class Team implements Serializable {
 
     @ManyToMany
     @JoinTable(name = "subjectandteam", joinColumns = @JoinColumn(name = "teamId"), inverseJoinColumns = @JoinColumn(name = "subjectId"))
-    private Subject subject;
+    private List<Subject> subjects;
 }

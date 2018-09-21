@@ -9,5 +9,5 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 public class MentiApplicationModel {
     private Long teamId;
-    private Long menti;
+    private String menti;
 }
