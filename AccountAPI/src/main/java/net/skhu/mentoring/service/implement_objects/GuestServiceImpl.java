@@ -19,12 +19,14 @@ import net.skhu.mentoring.repository.ProfessorRepository;
 import net.skhu.mentoring.repository.StudentRepository;
 import net.skhu.mentoring.service.interfaces.GuestService;
 import net.skhu.mentoring.util.Encryption;
+import net.skhu.mentoring.util.Mail;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 
 import javax.transaction.Transactional;
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
@@ -166,12 +168,19 @@ public class GuestServiceImpl implements GuestService {
     }
 
     @Override
-    public ResponseEntity<String> fetchFindAccountPassword(PasswordFindModel PasswordFindModel) {
+    public ResponseEntity<String> fetchFindAccountPassword(PasswordFindModel PasswordFindModel) throws IOException {
         Optional<Account> account = accountRepository.findByIdentityAndEmail(PasswordFindModel.getIdentity() , PasswordFindModel.getEmail());
         if(!account.isPresent()){
             return new ResponseEntity<>("존재하지 않는 회원 정보입니다.", HttpStatus.NON_AUTHORITATIVE_INFORMATION);
         } else {
-                return null;
+            Mail mail =new Mail();
+            System.out.print(PasswordFindModel.getEmail());
+
+            System.out.print(PasswordFindModel.getEmail());
+            mail.sendEmail(PasswordFindModel.getEmail());
+
+
+            return new ResponseEntity<>("do", HttpStatus.NON_AUTHORITATIVE_INFORMATION);
         }
     }
 }

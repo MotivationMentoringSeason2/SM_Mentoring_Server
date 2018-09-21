@@ -3,12 +3,12 @@ package net.skhu.mentoring.util;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
+import java.util.Arrays;
+import java.util.List;
 import java.util.Properties;
+import java.util.Random;
 
-import javax.mail.Message;
-import javax.mail.MessagingException;
-import javax.mail.Session;
-import javax.mail.Transport;
+import javax.mail.*;
 import javax.mail.internet.InternetAddress;
 import javax.mail.internet.MimeMessage;
 
@@ -35,12 +35,22 @@ public class Mail {
         int port= Integer.valueOf(mailAdmistrator.getProperty("port")); //포트번호
         // 메일 내용
 
+//        List list = Arrays.asList("A","B","C","D","E","F","H");
+        
+        Random random = new Random();
+        String randomPassword = "";
+        int randomInt02;
+        for(int i=0; i<5; i++){
+            randomInt02 = random.nextInt(9);
+            randomPassword+= String.valueOf(randomInt02);
+        }
+
 
         String recipient = email;
         //받는 사람의 메일주소를 입력해주세요.
         String subject = "인증 번호 발송 "; //메일 제목 입력해주세요.
         String body = "관리자로 부터 메일을 받았습니다. "
-                + "	     인증 번호는: ";
+                + "	     인증 번호는: " + randomPassword;
         //메일 내용 입력해주세요.
 
         try {
@@ -58,10 +68,10 @@ public class Mail {
             props.put("mail.smtp.socketFactory.fallback", "false");
 
 
-            Session session = Session.getDefaultInstance(props, new javax.mail.Authenticator()
+            Session session = Session.getDefaultInstance(props, new Authenticator()
             { String un=username; String pw=password; @Override
-            protected javax.mail.PasswordAuthentication getPasswordAuthentication()
-            { return new javax.mail.PasswordAuthentication(un, pw); } }); session.setDebug(true); //for debug
+            protected PasswordAuthentication getPasswordAuthentication()
+            { return new PasswordAuthentication(un, pw); } }); session.setDebug(true); //for debug
             Message mimeMessage = new MimeMessage(session); //MimeMessage 생성
             mimeMessage.setFrom(new InternetAddress("wkdtndgns@naver.com")); //발신자 셋팅 , 보내는 사람의 이메일주소를 한번 더 입력합니다.이때는 이메일 풀 주소를 다 작성해주세요.
             mimeMessage.setRecipient(Message.RecipientType.TO, new InternetAddress(recipient)); //수신자셋팅 //.TO 외에 .CC(참조) .BCC(숨은참조) 도 있음

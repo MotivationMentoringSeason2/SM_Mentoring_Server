@@ -7,10 +7,12 @@ import net.skhu.mentoring.model.ProfessorSignModel;
 import net.skhu.mentoring.model.StudentSignModel;
 import org.springframework.http.ResponseEntity;
 
+import java.io.IOException;
+
 public interface GuestService {
     ResponseEntity<String> fetchFindAccountIdentity(final IdentityFindModel identityFindModel);
     ResponseEntity<String> studentSignMessage(final StudentSignModel studentSignModel);
     ResponseEntity<String> professorSignMessage(final ProfessorSignModel professorSignModel);
     ResponseEntity<String> employeeSignMessage(final EmployeeSignModel employeeSignModel);
-    ResponseEntity<String> fetchFindAccountPassword(final PasswordFindModel PasswordFindModel);
+    ResponseEntity<String> fetchFindAccountPassword(final PasswordFindModel PasswordFindModel) throws IOException;
 }
