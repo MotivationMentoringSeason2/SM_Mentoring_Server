@@ -18,6 +18,8 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+import java.io.IOException;
+
 @RestController
 @CrossOrigin(origins = "http://localhost:3000")
 @RequestMapping("/AccountAPI/guest")
@@ -61,7 +63,7 @@ public class GuestRestController {
     }
 
     @PostMapping("account/password")
-    public ResponseEntity<String> findPassword(@RequestBody PasswordFindModel passwordFindModel){
+    public ResponseEntity<String> findPassword(@RequestBody PasswordFindModel passwordFindModel) throws IOException {
         return guestService.fetchFindAccountPassword(passwordFindModel);
     }
 
