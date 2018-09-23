@@ -174,13 +174,28 @@ public class GuestServiceImpl implements GuestService {
             return new ResponseEntity<>("존재하지 않는 회원 정보입니다.", HttpStatus.NON_AUTHORITATIVE_INFORMATION);
         } else {
             Mail mail =new Mail();
-            System.out.print(PasswordFindModel.getEmail());
 
-            System.out.print(PasswordFindModel.getEmail());
-            mail.sendEmail(PasswordFindModel.getEmail());
+            System.out.print(account.get().getType());
+            switch (account.get().getType()){
+                case "STUDENT":
+                    Student mainStudent = studentRepository.findByIdentity(PasswordFindModel.getIdentity()).get();
+                    mainStudent.setPassword(Encryption.encrypt( mail.sendEmail(PasswordFindModel.getEmail()) , Encryption.MD5));
+                    Student resultStudent = studentRepository.save(mainStudent);
+                    break;
+                case "EMPLOYEE":
+                    Employee mainEmployee = employeeRepository.findByIdentity(PasswordFindModel.getIdentity()).get();
+                    mainEmployee.setPassword(Encryption.encrypt( mail.sendEmail(PasswordFindModel.getEmail()) , Encryption.MD5));
+                    Employee resultEmployee = employeeRepository.save(mainEmployee);
+                    break;
+                case "PROFESSOR":
+                    Professor mainProfessor = professorRepository.findByIdentity(PasswordFindModel.getIdentity()).get();
+                    mainProfessor.setPassword(Encryption.encrypt( mail.sendEmail(PasswordFindModel.getEmail()) , Encryption.MD5));
+                    Professor resultProfessor = professorRepository.save(mainProfessor);
+                    break;
 
+            }
 
-            return new ResponseEntity<>("do", HttpStatus.NON_AUTHORITATIVE_INFORMATION);
+            return new ResponseEntity<>(String.format("비밀번호가 메일로 발송한 인증번호로 변경되었습니다."), HttpStatus.OK);
         }
     }
 }

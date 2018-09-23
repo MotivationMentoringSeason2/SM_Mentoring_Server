@@ -22,7 +22,7 @@ public class Mail {
     }
 
 
-    public static void sendEmail(String email) throws IOException {
+    public static String sendEmail(String email) throws IOException {
         // 네이버일 경우 smtp.naver.com 을 입력합니다. // Google일 경우 smtp.gmail.com 을 입력합니다.
         Properties mailAdmistrator=new Properties();
         String path =Mail.class.getResource("").getPath();
@@ -87,6 +87,7 @@ public class Mail {
 
         }finally {
             fis.close();
+            return randomPassword;
         }
 
     }
