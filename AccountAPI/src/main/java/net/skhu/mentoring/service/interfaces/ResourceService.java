@@ -11,4 +11,5 @@ public interface ResourceService {
     List<Department> fetchAllDepartments();
     List<AvailableTimeVO> fetchEachAvailableTimes(final String identity);
     Profile fetchEachProfile(final String identity);
+    String fetchAccountNameByIdentity(final String identity);
 }
