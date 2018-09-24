@@ -71,4 +71,11 @@ public class ResourceRestController {
         }
         return new ResponseEntity<Void>(HttpStatus.NO_CONTENT);
     }
+
+    @GetMapping("account/name/{identity}")
+    public ResponseEntity<String> fetchAccountNameByIdentity(@PathVariable String identity){
+        String result = resourceService.fetchAccountNameByIdentity(identity);
+        if(result != null) return ResponseEntity.ok(result);
+        else return ResponseEntity.noContent().build();
+    }
 }

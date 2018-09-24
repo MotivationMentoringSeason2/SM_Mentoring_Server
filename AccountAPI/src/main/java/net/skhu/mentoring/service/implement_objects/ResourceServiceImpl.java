@@ -55,11 +55,20 @@ public class ResourceServiceImpl implements ResourceService {
     }
 
     @Override
-    public Profile fetchEachProfile(String identity) {
+    public Profile fetchEachProfile(final String identity) {
         Optional<Account> account = accountRepository.findByIdentity(identity);
         if (account.isPresent()) {
             Optional<Profile> profile = profileRepository.findByAccount(account.get());
             return profile.isPresent() ? profile.get() : null;
+        } else return null;
+    }
+
+    @Override
+    public String fetchAccountNameByIdentity(final String identity) {
+        Optional<Account> account = accountRepository.findByIdentity(identity);
+        if (account.isPresent()) {
+            Account tmpAccount = account.get();
+            return tmpAccount.getName();
         } else return null;
     }
 }
