@@ -1,5 +1,6 @@
 package net.skhu.mentoring.service.interfaces;
 
+import net.skhu.mentoring.domain.Post;
 import net.skhu.mentoring.domain.Type;
 import net.skhu.mentoring.model.NoticePagination;
 import net.skhu.mentoring.model.OptionModel;
@@ -17,8 +18,9 @@ public interface NoticeIntegrateService {
     Type fetchTypeById(final Long typeId);
     List<NoticePostBriefVO> fetchByPaginationModel(final NoticePagination noticePagination);
     NoticePostMainVO fetchPostById(final Long postId);
-    ResponseEntity<String> executeCreatingPost(final PostModel postModel, final String writer);
-    ResponseEntity<String> executeUpdatingPost(final Long postId, final PostModel postModel);
+    PostModel fetchPostModelById(final Long postId);
+    Post executeCreatingPost(final PostModel postModel, final String writer);
+    Post executeUpdatingPost(final Long postId, final PostModel postModel);
     ResponseEntity<String> executeRemovingPost(final Long postId);
     ResponseEntity<String> executeRemovingMultiplePosts(final List<Long> ids);
     ResponseEntity<String> executeRemovingByUserId(final String userId);

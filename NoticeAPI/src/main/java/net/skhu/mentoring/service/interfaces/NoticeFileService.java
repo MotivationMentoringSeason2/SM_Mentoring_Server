@@ -14,8 +14,8 @@ public interface NoticeFileService {
     List<Long> fetchByNoticePostIdImageIdList(final Long postId);
     File fetchByNoticeFileId(final Long fileId);
     Image fetchByNoticeImageId(final Long imageId);
-    ResponseEntity<String> executeNoticeFileUploading(final Long postId, final MultipartFile[] files) throws IOException;
-    ResponseEntity<String> executeNoticeImageUploading(final Long postId, final MultipartFile[] images) throws IOException;
+    ResponseEntity<String> executeNoticeFileUploading(final Long postId, final List<MultipartFile> files) throws IOException;
+    ResponseEntity<String> executeNoticeImageUploading(final Long postId, final List<MultipartFile> images) throws IOException;
     ResponseEntity<String> executeNoticeFileRemoving(final Long fileId);
     ResponseEntity<String> executeNoticeFileRemovingMultiple(final List<Long> ids);
     ResponseEntity<String> executeNoticeFileRemovingByPostId(final Long postId);

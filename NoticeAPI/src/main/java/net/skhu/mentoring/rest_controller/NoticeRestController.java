@@ -1,14 +1,12 @@
 package net.skhu.mentoring.rest_controller;
 
+import net.skhu.mentoring.domain.Post;
 import net.skhu.mentoring.domain.Type;
 import net.skhu.mentoring.model.NoticePagination;
 import net.skhu.mentoring.model.OptionModel;
 import net.skhu.mentoring.model.PostModel;
-import net.skhu.mentoring.service.interfaces.NoticeCommentService;
-import net.skhu.mentoring.service.interfaces.NoticeFileService;
 import net.skhu.mentoring.service.interfaces.NoticeIntegrateService;
 import net.skhu.mentoring.vo.NoticeListIntegrateVO;
-import net.skhu.mentoring.vo.NoticePostBriefVO;
 import net.skhu.mentoring.vo.NoticePostMainVO;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
@@ -65,14 +63,23 @@ public class NoticeRestController {
         else return ResponseEntity.noContent().build();
     }
 
+    @GetMapping("post/model/{postId}")
+    public ResponseEntity<PostModel> fetchPostModelById(@PathVariable Long postId){
+        PostModel postModel = noticeIntegrateService.fetchPostModelById(postId);
+        if(postModel != null) return ResponseEntity.ok(postModel);
+        else return ResponseEntity.noContent().build();
+    }
+
     @PostMapping("post/{userId}")
-    public ResponseEntity<String> executeCreatingPost(@PathVariable String userId, @RequestBody PostModel postModel){
-        return noticeIntegrateService.executeCreatingPost(postModel, userId);
+    public ResponseEntity<?> executeCreatingPost(@PathVariable String userId, @RequestBody PostModel postModel){
+        Post post = noticeIntegrateService.executeCreatingPost(postModel, userId);
+        return post != null ? ResponseEntity.ok(post) : ResponseEntity.noContent().build();
     }
 
     @PutMapping("post/{postId}")
-    public ResponseEntity<String> executeUpdatingPost(@PathVariable Long postId, @PathVariable String userId, @RequestBody PostModel postModel){
-        return noticeIntegrateService.executeUpdatingPost(postId, postModel);
+    public ResponseEntity<?> executeUpdatingPost(@PathVariable Long postId, @RequestBody PostModel postModel){
+        Post post = noticeIntegrateService.executeUpdatingPost(postId, postModel);
+        return post != null ? ResponseEntity.ok(post) : ResponseEntity.noContent().build();
     }
 
     @DeleteMapping("post/{postId}")
