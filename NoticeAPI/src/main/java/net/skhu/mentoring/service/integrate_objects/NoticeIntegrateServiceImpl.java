@@ -73,8 +73,17 @@ public class NoticeIntegrateServiceImpl implements NoticeIntegrateService {
     }
 
     @Override
+    public PostModel fetchPostModelById(final Long postId){
+        Optional<Post> post = postRepository.findById(postId);
+        if(post.isPresent()){
+            Post tmpPost = post.get();
+            return PostModel.builtToModel(tmpPost);
+        } else return null;
+    }
+
+    @Override
     @Transactional
-    public ResponseEntity<String> executeCreatingPost(final PostModel postModel, final String writer) {
+    public Post executeCreatingPost(final PostModel postModel, final String writer) {
         Optional<Type> type = typeRepository.findById(postModel.getTypeId());
         if(type.isPresent()) {
             Post createPost = new Post();
@@ -85,25 +94,23 @@ public class NoticeIntegrateServiceImpl implements NoticeIntegrateService {
             createPost.setType(type.get());
             createPost.setWrittenDate(LocalDateTime.now());
             createPost.setViews(0);
-            postRepository.save(createPost);
-            return ResponseEntity.ok("새로운 게시글이 저장 되었습니다.");
+            return postRepository.save(createPost);
         } else {
-            return new ResponseEntity<>("게시글을 저장하기 위한 게시판 타입이 불분명합니다.", HttpStatus.NON_AUTHORITATIVE_INFORMATION);
+            return null;
         }
     }
 
     @Override
     @Transactional
-    public ResponseEntity<String> executeUpdatingPost(final Long postId, final PostModel postModel) {
+    public Post executeUpdatingPost(final Long postId, final PostModel postModel) {
         if(postRepository.existsById(postId)){
             Post updatePost = postRepository.getOne(postId);
             updatePost.setTitle(postModel.getTitle());
             updatePost.setContext(postModel.getContext());
             updatePost.setWrittenDate(LocalDateTime.now());
-            postRepository.save(updatePost);
-            return ResponseEntity.ok("게시글 내용 일부가 수정 되었습니다.");
+            return postRepository.save(updatePost);
         } else {
-            return new ResponseEntity<>("게시글이 존재하지 않아 수정 작업이 진행되지 않았습니다.", HttpStatus.NON_AUTHORITATIVE_INFORMATION);
+            return null;
         }
     }
 

@@ -12,10 +12,10 @@ import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.PutMapping;
+import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestPart;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.multipart.MultipartFile;
 
@@ -82,8 +82,8 @@ public class FileRestController {
         return new ResponseEntity<Void>(HttpStatus.NO_CONTENT);
     }
 
-    @PutMapping(value = "file/{postId}", consumes="multipart/form-data")
-    public ResponseEntity<String> executeUploadingFilesByPostId(@PathVariable Long postId, @RequestPart("file") MultipartFile[] files){
+    @PostMapping(value = "files/{postId}", consumes="multipart/form-data")
+    public ResponseEntity<String> executeUploadingFilesByPostId(@PathVariable Long postId, @RequestParam("files") List<MultipartFile> files){
         try {
             return noticeFileService.executeNoticeFileUploading(postId, files);
         } catch (IOException e) {
@@ -91,8 +91,8 @@ public class FileRestController {
         }
     }
 
-    @PutMapping(value = "image/{postId}", consumes="multipart/form-data")
-    public ResponseEntity<String> executeUploadingImagesByPostId(@PathVariable Long postId, @RequestPart("file") MultipartFile[] files){
+    @PostMapping(value = "images/{postId}", consumes="multipart/form-data")
+    public ResponseEntity<String> executeUploadingImagesByPostId(@PathVariable Long postId, @RequestParam("files") List<MultipartFile> files){
         try {
             return noticeFileService.executeNoticeImageUploading(postId, files);
         } catch (IOException e) {

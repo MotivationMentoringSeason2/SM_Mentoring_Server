@@ -63,7 +63,7 @@ public class NoticeFileServiceImpl implements NoticeFileService {
 
     @Override
     @Transactional
-    public ResponseEntity<String> executeNoticeFileUploading(final Long postId, final MultipartFile[] files) throws IOException {
+    public ResponseEntity<String> executeNoticeFileUploading(final Long postId, final List<MultipartFile> files) throws IOException {
         Optional<Post> post = postRepository.findById(postId);
         if(post.isPresent()) {
             boolean beUploaded = true;
@@ -73,7 +73,7 @@ public class NoticeFileServiceImpl implements NoticeFileService {
                     break;
                 }
                 Optional<File> tmpFile = fileRepository.findByFileNameAndPost(file.getOriginalFilename(), post.get());
-                if(!tmpFile.isPresent()){
+                if(tmpFile.isPresent()){
                     if(!Arrays.equals(tmpFile.get().getFileData(), file.getBytes())){
                         File updateFile = tmpFile.get();
                         updateFile.setFileSize(file.getBytes().length);
@@ -94,7 +94,7 @@ public class NoticeFileServiceImpl implements NoticeFileService {
 
     @Override
     @Transactional
-    public ResponseEntity<String> executeNoticeImageUploading(final Long postId, final MultipartFile[] images) throws IOException {
+    public ResponseEntity<String> executeNoticeImageUploading(final Long postId, final List<MultipartFile> images) throws IOException {
         Optional<Post> post = postRepository.findById(postId);
         if(post.isPresent()) {
             boolean beUploaded = true;
@@ -104,7 +104,7 @@ public class NoticeFileServiceImpl implements NoticeFileService {
                     break;
                 }
                 Optional<Image> tmpImage = imageRepository.findByFileNameAndPost(image.getOriginalFilename(), post.get());
-                if(!tmpImage.isPresent()){
+                if(tmpImage.isPresent()){
                     if(!Arrays.equals(tmpImage.get().getFileData(), image.getBytes())){
                         Image updateImage = tmpImage.get();
                         updateImage.setFileSize(image.getBytes().length);
