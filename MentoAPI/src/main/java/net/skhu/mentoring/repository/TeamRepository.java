@@ -12,6 +12,7 @@ import java.util.Optional;
 @Repository
 public interface TeamRepository extends JpaRepository<Team, Long> {
     List<Team> findBySemester(Semester semester);
+    List<Team> findByMentoOrderByIdDesc(String mento);
     List<Team> findBySemesterAndStatus(Semester semester, ResultStatus status);
     Optional<Team> findByMentoAndSemester(String mento, Semester semester);
     boolean existsByMentoAndSemester(String mento, Semester semester);

@@ -9,6 +9,7 @@ import net.skhu.mentoring.repository.MentiRepository;
 import net.skhu.mentoring.repository.SemesterRepository;
 import net.skhu.mentoring.repository.TeamRepository;
 import net.skhu.mentoring.service.interfaces.MentiService;
+import net.skhu.mentoring.vo.CareerBriefVO;
 import net.skhu.mentoring.vo.MentiAppVO;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -45,6 +46,17 @@ public class MentiServiceImpl implements MentiService {
     }
 
     @Override
+    public List<CareerBriefVO> fetchMentiCareerList(final String userId) {
+        Optional<Semester> semester = semesterRepository.findByCurrentSemester();
+        if (semester.isPresent()) {
+            List<Menti> mentis = mentiRepository.findByUserIdOrderByIdDesc(userId);
+            return mentis.stream()
+                    .map(menti -> CareerBriefVO.builtToVO(menti.getTeam(), (int) mentiRepository.countByTeam(menti.getTeam())))
+                    .collect(Collectors.toList());
+        } else return null;
+    }
+
+    @Override
     @Transactional
     public ResponseEntity<String> executeCreateMentiApplication(final MentiApplicationModel mentiApplicationModel) {
         Optional<Semester> semester = semesterRepository.findByCurrentSemester();
@@ -70,7 +82,7 @@ public class MentiServiceImpl implements MentiService {
     @Transactional
     public ResponseEntity<String> executeRemoveMentiApplication(final MentiApplicationModel mentiApplicationModel) {
         Optional<Team> team = teamRepository.findById(mentiApplicationModel.getTeamId());
-        if(!team.isPresent()){
+        if(team.isPresent()){
             if(mentiRepository.existsByUserIdAndTeam(mentiApplicationModel.getMenti(), team.get())){
                 mentiRepository.deleteByUserIdAndTeam(mentiApplicationModel.getMenti(), team.get());
                 return ResponseEntity.ok(String.format("%s 님의 %s 팀 멘티 취소 작업이 완료 되었습니다.", mentiApplicationModel.getMenti(), team.get().getName()));

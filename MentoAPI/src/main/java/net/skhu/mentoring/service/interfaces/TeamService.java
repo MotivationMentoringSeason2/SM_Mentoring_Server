@@ -2,6 +2,7 @@ package net.skhu.mentoring.service.interfaces;
 
 import net.skhu.mentoring.enumeration.ResultStatus;
 import net.skhu.mentoring.model.MentoApplicationModel;
+import net.skhu.mentoring.vo.CareerBriefVO;
 import net.skhu.mentoring.vo.MentoVO;
 import net.skhu.mentoring.vo.PersonVO;
 import org.springframework.http.ResponseEntity;
@@ -13,6 +14,7 @@ import java.util.List;
 public interface TeamService {
     List<MentoVO> fetchMentoListBySemesterId(final Long semesterId);
     List<MentoVO> fetchMentoListByStatus(final ResultStatus status);
+    List<CareerBriefVO> fetchMentoBriefInfoByIdentity(final String mento);
     MentoVO fetchMentoInfoByTeamId(final Long teamId);
     PersonVO fetchMentoringTeamPersonByTeamId(final Long teamId);
     MentoApplicationModel fetchUpdateMentoApplicationModel(final String mento);

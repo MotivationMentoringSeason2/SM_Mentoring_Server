@@ -12,6 +12,7 @@ import net.skhu.mentoring.repository.SubjectRepository;
 import net.skhu.mentoring.repository.TeamAdvertiseRepository;
 import net.skhu.mentoring.repository.TeamRepository;
 import net.skhu.mentoring.service.interfaces.TeamService;
+import net.skhu.mentoring.vo.CareerBriefVO;
 import net.skhu.mentoring.vo.MentoVO;
 import net.skhu.mentoring.vo.PersonVO;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -89,6 +90,14 @@ public class TeamServiceImpl implements TeamService {
                     })
                     .collect(Collectors.toList());
         } else return null;
+    }
+
+    @Override
+    public List<CareerBriefVO> fetchMentoBriefInfoByIdentity(final String mento) {
+        List<Team> mentoInfos = teamRepository.findByMentoOrderByIdDesc(mento);
+        return mentoInfos.stream()
+                .map(team -> CareerBriefVO.builtToVO(team, (int) mentiRepository.countByTeam(team)))
+                .collect(Collectors.toList());
     }
 
     @Override

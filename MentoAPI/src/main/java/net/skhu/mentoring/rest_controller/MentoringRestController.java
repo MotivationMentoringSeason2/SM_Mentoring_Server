@@ -5,6 +5,7 @@ import net.skhu.mentoring.model.MentiApplicationModel;
 import net.skhu.mentoring.model.MentoApplicationModel;
 import net.skhu.mentoring.service.interfaces.MentiService;
 import net.skhu.mentoring.service.interfaces.TeamService;
+import net.skhu.mentoring.vo.CareerBriefVO;
 import net.skhu.mentoring.vo.MentiAppVO;
 import net.skhu.mentoring.vo.MentoVO;
 import net.skhu.mentoring.vo.PersonVO;
@@ -45,6 +46,11 @@ public class MentoringRestController {
     public ResponseEntity<List<MentoVO>> fetchMentoListByCurrentSemester(@PathVariable ResultStatus status){
         List<MentoVO> mentoVOs = teamService.fetchMentoListByStatus(status);
         return mentoVOs != null ? ResponseEntity.ok(mentoVOs) : ResponseEntity.noContent().build();
+    }
+
+    @GetMapping("teams/career/{mento}")
+    public ResponseEntity<List<CareerBriefVO>> fetchBriefMentoListByIdentity(@PathVariable String mento){
+        return ResponseEntity.ok(teamService.fetchMentoBriefInfoByIdentity(mento));
     }
 
     @GetMapping("team/{teamId}")
@@ -90,8 +96,13 @@ public class MentoringRestController {
     }
 
     @GetMapping("menti/infos/{userId}")
-    public ResponseEntity<List<MentiAppVO>> fettchMentiAppInfos(@PathVariable String userId){
+    public ResponseEntity<List<MentiAppVO>> fetchMentiAppInfos(@PathVariable String userId){
         return ResponseEntity.ok(mentiService.fetchCurrentMentiAppInfo(userId));
+    }
+
+    @GetMapping("mentis/career/{userId}")
+    public ResponseEntity<List<CareerBriefVO>> fetchMentiCareerList(@PathVariable String userId){
+        return ResponseEntity.ok(mentiService.fetchMentiCareerList(userId));
     }
 
     @PostMapping("menti")
