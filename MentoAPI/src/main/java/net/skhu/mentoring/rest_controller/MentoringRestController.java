@@ -5,6 +5,7 @@ import net.skhu.mentoring.model.MentiApplicationModel;
 import net.skhu.mentoring.model.MentoApplicationModel;
 import net.skhu.mentoring.service.interfaces.MentiService;
 import net.skhu.mentoring.service.interfaces.TeamService;
+import net.skhu.mentoring.vo.CareerBriefVO;
 import net.skhu.mentoring.vo.MentiAppVO;
 import net.skhu.mentoring.vo.MentoVO;
 import net.skhu.mentoring.vo.PersonVO;
@@ -47,6 +48,11 @@ public class MentoringRestController {
         return mentoVOs != null ? ResponseEntity.ok(mentoVOs) : ResponseEntity.noContent().build();
     }
 
+    @GetMapping("teams/career/{mento}")
+    public ResponseEntity<List<CareerBriefVO>> fetchBriefMentoListByIdentity(@PathVariable String mento){
+        return ResponseEntity.ok(teamService.fetchMentoBriefInfoByIdentity(mento));
+    }
+
     @GetMapping("team/{teamId}")
     public ResponseEntity<MentoVO> fetchTeamById(@PathVariable Long teamId){
         MentoVO mentoVO = teamService.fetchMentoInfoByTeamId(teamId);
@@ -69,8 +75,13 @@ public class MentoringRestController {
         return teamService.executeMentoApplicate(mentoApplicationModel, advFile, mento);
     }
 
+    @PutMapping(value = "team/info/{mento}")
+    public ResponseEntity<String> executeMentoApplicateUpdatingOnlyInfos(@PathVariable String mento, @RequestBody MentoApplicationModel mentoApplicationModel) throws IOException {
+        return teamService.executeUpdateMentoApplicate(mentoApplicationModel, null, mento);
+    }
+
     @PutMapping(value = "team/{mento}", consumes = {"multipart/form-data"})
-    public ResponseEntity<String> executeMentoApplicateUpdating(@PathVariable String mento, @RequestPart("applicationModel") MentoApplicationModel mentoApplicationModel, @RequestPart("advFile") MultipartFile advFile) throws IOException{
+    public ResponseEntity<String> executeMentoApplicateUpdatingWithFiles(@PathVariable String mento, @RequestPart("applicationModel") MentoApplicationModel mentoApplicationModel, @RequestPart("advFile") MultipartFile advFile) throws IOException{
         return teamService.executeUpdateMentoApplicate(mentoApplicationModel, advFile, mento);
     }
 
@@ -90,8 +101,13 @@ public class MentoringRestController {
     }
 
     @GetMapping("menti/infos/{userId}")
-    public ResponseEntity<List<MentiAppVO>> fettchMentiAppInfos(@PathVariable String userId){
+    public ResponseEntity<List<MentiAppVO>> fetchMentiAppInfos(@PathVariable String userId){
         return ResponseEntity.ok(mentiService.fetchCurrentMentiAppInfo(userId));
+    }
+
+    @GetMapping("mentis/career/{userId}")
+    public ResponseEntity<List<CareerBriefVO>> fetchMentiCareerList(@PathVariable String userId){
+        return ResponseEntity.ok(mentiService.fetchMentiCareerList(userId));
     }
 
     @PostMapping("menti")

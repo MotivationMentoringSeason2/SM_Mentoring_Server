@@ -12,6 +12,7 @@ import javax.persistence.Enumerated;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
+import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import java.io.Serializable;
 import java.time.LocalDateTime;
@@ -28,7 +29,7 @@ public class Schedule implements Serializable {
     private Long id;
 
     @ManyToOne
-    @Column(name = "teamId")
+    @JoinColumn(name = "teamId")
     private Team team;
 
     @Column(nullable = false)
