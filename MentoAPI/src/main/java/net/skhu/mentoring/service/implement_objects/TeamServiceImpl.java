@@ -178,7 +178,7 @@ public class TeamServiceImpl implements TeamService {
                 updateTeam.setName(mentoApplicationModel.getTeamName());
                 updateTeam.setPerson(mentoApplicationModel.getPerson());
                 updateTeam.setAdvertise(mentoApplicationModel.getAdvertise());
-                updateTeam.setStatus(ResultStatus.LOADING);
+                updateTeam.setStatus(updateTeam.getStatus());
                 updateTeam.setMento(mento);
                 teamRepository.save(updateTeam);
                 if (advFile != null) {

@@ -75,8 +75,13 @@ public class MentoringRestController {
         return teamService.executeMentoApplicate(mentoApplicationModel, advFile, mento);
     }
 
+    @PutMapping(value = "team/info/{mento}")
+    public ResponseEntity<String> executeMentoApplicateUpdatingOnlyInfos(@PathVariable String mento, @RequestBody MentoApplicationModel mentoApplicationModel) throws IOException {
+        return teamService.executeUpdateMentoApplicate(mentoApplicationModel, null, mento);
+    }
+
     @PutMapping(value = "team/{mento}", consumes = {"multipart/form-data"})
-    public ResponseEntity<String> executeMentoApplicateUpdating(@PathVariable String mento, @RequestPart("applicationModel") MentoApplicationModel mentoApplicationModel, @RequestPart("advFile") MultipartFile advFile) throws IOException{
+    public ResponseEntity<String> executeMentoApplicateUpdatingWithFiles(@PathVariable String mento, @RequestPart("applicationModel") MentoApplicationModel mentoApplicationModel, @RequestPart("advFile") MultipartFile advFile) throws IOException{
         return teamService.executeUpdateMentoApplicate(mentoApplicationModel, advFile, mento);
     }
 
