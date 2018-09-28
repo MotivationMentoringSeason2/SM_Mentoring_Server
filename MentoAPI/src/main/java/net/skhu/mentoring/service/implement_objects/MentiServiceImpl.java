@@ -11,6 +11,7 @@ import net.skhu.mentoring.repository.TeamRepository;
 import net.skhu.mentoring.service.interfaces.MentiService;
 import net.skhu.mentoring.vo.CareerBriefVO;
 import net.skhu.mentoring.vo.MentiAppVO;
+import net.skhu.mentoring.vo.MentoringTokenVO;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -32,6 +33,21 @@ public class MentiServiceImpl implements MentiService {
 
     @Autowired
     private MentiRepository mentiRepository;
+
+    @Override
+    public MentoringTokenVO fetchCurrentMentoringToken(final String userId) {
+        Optional<Semester> semester = semesterRepository.findByCurrentSemester();
+        if(semester.isPresent()) {
+            Optional<Menti> menti = mentiRepository.findByTeamSemesterAndUserId(semester.get(), userId);
+            if(menti.isPresent()){
+                Menti tmpMenti = menti.get();
+                Team team = tmpMenti.getTeam();
+                if(team.getStatus().equals(ResultStatus.PERMIT)){
+                    return MentoringTokenVO.builtToVO(team, "MENTI");
+                } else return null;
+            } return null;
+        } else return null;
+    }
 
     @Override
     public List<MentiAppVO> fetchCurrentMentiAppInfo(final String userId) {

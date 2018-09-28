@@ -4,6 +4,7 @@ import net.skhu.mentoring.enumeration.ResultStatus;
 import net.skhu.mentoring.model.MentoApplicationModel;
 import net.skhu.mentoring.vo.CareerBriefVO;
 import net.skhu.mentoring.vo.MentoVO;
+import net.skhu.mentoring.vo.MentoringTokenVO;
 import net.skhu.mentoring.vo.PersonVO;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.multipart.MultipartFile;
@@ -12,6 +13,7 @@ import java.io.IOException;
 import java.util.List;
 
 public interface TeamService {
+    MentoringTokenVO fetchCurrentMentoringToken(final String userId);
     List<MentoVO> fetchMentoListBySemesterId(final Long semesterId);
     List<MentoVO> fetchMentoListByStatus(final ResultStatus status);
     List<CareerBriefVO> fetchMentoBriefInfoByIdentity(final String mento);
