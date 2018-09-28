@@ -7,11 +7,13 @@ import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 
 import java.util.List;
+import java.util.Optional;
 
 @Repository
 public interface MentiRepository extends JpaRepository<Menti, Long> {
     List<Menti> findByTeam(Team team);
     List<Menti> findByUserIdOrderByIdDesc(String userId);
+    Optional<Menti> findByTeamSemesterAndUserId(Semester semester, String userId);
     boolean existsByUserIdAndTeam(String userId, Team team);
     boolean existsByUserIdAndTeamSemester(String userId, Semester semester);
     long countByTeam(Team team);

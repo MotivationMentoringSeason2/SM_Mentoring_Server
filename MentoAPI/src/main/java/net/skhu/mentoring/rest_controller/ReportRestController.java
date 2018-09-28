@@ -1,7 +1,14 @@
 package net.skhu.mentoring.rest_controller;
 
 import net.skhu.mentoring.model.ReportModel;
+import net.skhu.mentoring.service.interfaces.ReportExcelService;
 import net.skhu.mentoring.service.interfaces.ReportService;
+import net.skhu.mentoring.service.interfaces.ScheduleService;
+import net.skhu.mentoring.service.interfaces.TeamService;
+import net.skhu.mentoring.vo.MentoVO;
+import net.skhu.mentoring.vo.ReportListVO;
+import net.skhu.mentoring.vo.ReportViewVO;
+import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.CrossOrigin;
@@ -13,41 +20,81 @@ import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.multipart.MultipartFile;
+
+import javax.servlet.http.HttpServletResponse;
+import java.io.BufferedOutputStream;
+import java.io.IOException;
+import java.net.URLEncoder;
+import java.util.List;
 
 @RestController
 @CrossOrigin
 @RequestMapping("MentoAPI")
 public class ReportRestController {
     @Autowired
+    private TeamService teamService;
+
+    @Autowired
     private ReportService reportService;
 
+    @Autowired
+    private ScheduleService scheduleService;
+
+    @Autowired
+    private ReportExcelService reportExcelService;
+
     @GetMapping("reports/{teamId}")
-    public ResponseEntity<String> fetchReportListByTeamId(@PathVariable Long teamId){
-        return ResponseEntity.ok("팀 별 보고서 목록을 불러옵니다.");
+    public ResponseEntity<ReportListVO> fetchReportListByTeamId(@PathVariable Long teamId){
+        return ResponseEntity.ok(ReportListVO.builtToVO(reportService.fetchReportListByTeamId(teamId), scheduleService.fetchMentoringActivityByTeamId(teamId)));
     }
 
     @GetMapping("report/{reportId}")
-    public ResponseEntity<String> fetchReportById(@PathVariable Long reportId){
-        return ResponseEntity.ok("보고서 한 단위를 불러옵니다.");
+    public ResponseEntity<ReportViewVO> fetchReportById(@PathVariable Long reportId){
+        return ResponseEntity.ok(reportService.fetchReportViewById(reportId));
     }
 
-    @PostMapping("report")
-    public ResponseEntity<String> executeReportCreating(@RequestBody ReportModel reportModel){
-        return ResponseEntity.ok("보고서를 추가 하였습니다.");
+    @GetMapping("report/model/{reportId}")
+    public ResponseEntity<ReportModel> fetchReportModelById(@PathVariable Long reportId){
+        return ResponseEntity.ok(reportService.fetchReportModelById(reportId));
     }
 
-    @PutMapping("report")
-    public ResponseEntity<String> executeReportUpdating(@RequestBody ReportModel reportModel){
-        return ResponseEntity.ok("보고서를 수정 하였습니다.");
+    @PostMapping(value = "report/{scheduleId}", consumes = {"multipart/form-data"})
+    public ResponseEntity<String> executeReportCreating(@PathVariable Long scheduleId, @RequestBody ReportModel reportModel, MultipartFile photoFile) throws IOException {
+        return reportService.createReportWithScheduleId(scheduleId, reportModel, photoFile);
     }
 
-    @DeleteMapping("report/{reportId}")
-    public ResponseEntity<String> executeReportRemoving(@PathVariable Long reportId){
-        return ResponseEntity.ok("보고서를 지도 교수나 관리자에 의해 삭제 받았습니다.");
+    @PutMapping("report/context/{scheduleId}")
+    public ResponseEntity<String> executeReportUpdatingContextOnly(@PathVariable Long scheduleId, @RequestBody ReportModel reportModel) throws IOException {
+        return reportService.updateReportWithScheduleId(scheduleId, reportModel, null);
     }
 
-    @DeleteMapping("subjects/{teamId}")
-    public ResponseEntity<String> executeSubjectRemovingByTeamId(@PathVariable Long teamId){
-        return ResponseEntity.ok("관리자가 이제 볼 필요 없는 팀의 아이디로 보고서를 지웁니다.");
+    @PutMapping(value = "report/{scheduleId}", consumes = {"multipart/form-data"})
+    public ResponseEntity<String> executeReportUpdating(@PathVariable Long scheduleId, @RequestBody ReportModel reportModel, MultipartFile photoFile) throws IOException {
+        return reportService.updateReportWithScheduleId(scheduleId, reportModel, photoFile);
+    }
+
+    @DeleteMapping("reports")
+    public ResponseEntity<String> executeReportRemoving(@PathVariable List<Long> reportIds){
+        return reportService.deleteReportByIdList(reportIds);
+    }
+
+    @DeleteMapping("report/{teamId}")
+    public ResponseEntity<String> executeRemovingByTeamId(@PathVariable Long teamId){
+        return reportService.deleteReportByTeam(teamId);
+    }
+
+    @GetMapping("report/excel/{teamId}/{realname}")
+    public void executeReportListByMento(@PathVariable Long teamId, @PathVariable String realname, HttpServletResponse response) throws Exception{
+        MentoVO mentoVO = teamService.fetchMentoInfoByTeamId(teamId);
+        if(mentoVO != null) {
+            XSSFWorkbook workbook = reportExcelService.fetchReportMultiWorkbook(teamId, realname);
+            String fileName = URLEncoder.encode(String.format("%s_멘토링_보고서_목록.xlsx", mentoVO.getName()), "UTF-8");
+            response.setContentType("application/octet-stream");
+            response.setHeader("Content-Disposition", "attachment;filename=" + fileName + ";");
+            try (BufferedOutputStream output = new BufferedOutputStream(response.getOutputStream())) {
+                workbook.write(output);
+            }
+        }
     }
 }

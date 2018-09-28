@@ -14,6 +14,7 @@ import net.skhu.mentoring.repository.TeamRepository;
 import net.skhu.mentoring.service.interfaces.TeamService;
 import net.skhu.mentoring.vo.CareerBriefVO;
 import net.skhu.mentoring.vo.MentoVO;
+import net.skhu.mentoring.vo.MentoringTokenVO;
 import net.skhu.mentoring.vo.PersonVO;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -64,6 +65,15 @@ public class TeamServiceImpl implements TeamService {
             TeamAdvertiseFile newTeamAdvFile = new TeamAdvertiseFile(0L, team, advFile.getOriginalFilename(), advFile.getSize(), advFile.getBytes(), this.getFileSuffix(advFile.getOriginalFilename()).toUpperCase(), LocalDateTime.now());
             teamAdvertiseRepository.save(newTeamAdvFile);
         }
+    }
+
+    @Override
+    public MentoringTokenVO fetchCurrentMentoringToken(final String userId) {
+        Optional<Semester> semester = semesterRepository.findByCurrentSemester();
+        if(semester.isPresent()) {
+            Optional<Team> team = teamRepository.findBySemesterAndStatusAndMento(semester.get(), ResultStatus.PERMIT, userId);
+            return team.isPresent() ? MentoringTokenVO.builtToVO(team.get(), "MENTO") : null;
+        } else return null;
     }
 
     @Override

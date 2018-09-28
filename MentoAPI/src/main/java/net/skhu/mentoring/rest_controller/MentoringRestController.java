@@ -8,6 +8,7 @@ import net.skhu.mentoring.service.interfaces.TeamService;
 import net.skhu.mentoring.vo.CareerBriefVO;
 import net.skhu.mentoring.vo.MentiAppVO;
 import net.skhu.mentoring.vo.MentoVO;
+import net.skhu.mentoring.vo.MentoringTokenVO;
 import net.skhu.mentoring.vo.PersonVO;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
@@ -70,6 +71,12 @@ public class MentoringRestController {
         return mentoApplicationModel != null ? ResponseEntity.ok(mentoApplicationModel) : ResponseEntity.noContent().build();
     }
 
+    @GetMapping("team/token/{userId}")
+    public ResponseEntity<MentoringTokenVO> fetchCurrentMentoringTokenByMento(@PathVariable String userId){
+        MentoringTokenVO mentoringTokenVO = teamService.fetchCurrentMentoringToken(userId);
+        return mentoringTokenVO != null ? ResponseEntity.ok(mentoringTokenVO) : ResponseEntity.noContent().build();
+    }
+
     @PostMapping(value = "team/{mento}", consumes = {"multipart/form-data"})
     public ResponseEntity<String> executeMentoApplicate(@PathVariable String mento, @RequestPart("applicationModel") MentoApplicationModel mentoApplicationModel, @RequestPart("advFile") MultipartFile advFile) throws IOException {
         return teamService.executeMentoApplicate(mentoApplicationModel, advFile, mento);
@@ -108,6 +115,12 @@ public class MentoringRestController {
     @GetMapping("mentis/career/{userId}")
     public ResponseEntity<List<CareerBriefVO>> fetchMentiCareerList(@PathVariable String userId){
         return ResponseEntity.ok(mentiService.fetchMentiCareerList(userId));
+    }
+
+    @GetMapping("menti/token/{userId}")
+    public ResponseEntity<MentoringTokenVO> fetchCurrentMentoringTokenByMenti(@PathVariable String userId){
+        MentoringTokenVO mentoringTokenVO = mentiService.fetchCurrentMentoringToken(userId);
+        return mentoringTokenVO != null ? ResponseEntity.ok(mentoringTokenVO) : ResponseEntity.noContent().build();
     }
 
     @PostMapping("menti")
