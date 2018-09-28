@@ -1,5 +1,6 @@
 package net.skhu.mentoring.rest_controller;
 
+import net.skhu.mentoring.model.ConfirmModel;
 import net.skhu.mentoring.model.ScheduleModel;
 import net.skhu.mentoring.service.interfaces.ScheduleService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -14,6 +15,8 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+import java.util.List;
+
 @RestController
 @CrossOrigin
 @RequestMapping("MentoAPI")
@@ -22,42 +25,37 @@ public class ScheduleRestController {
     private ScheduleService scheduleService;
 
     @GetMapping("schedules/{teamId}")
-    public ResponseEntity<String> fetchSchedulesByTeamId(@PathVariable Long teamId){
-        return ResponseEntity.ok("팀 번호(멘토 번호)를 이용하여 스케쥴 목록을 가져옵니다.");
+    public ResponseEntity<?> fetchSchedulesByTeamId(@PathVariable Long teamId){
+        return ResponseEntity.ok(scheduleService.fetchBriefListByTeamId(teamId));
     }
 
-    @GetMapping("schedule/{scheduleId}")
-    public ResponseEntity<String> fetchScheduleById(@PathVariable Long scheduleId){
-        return ResponseEntity.ok("스케쥴 한 단위를 가져옵니다.");
+    @GetMapping("schedule/model/{scheduleId}")
+    public ResponseEntity<?> fetchScheduleModelById(@PathVariable Long scheduleId){
+        return ResponseEntity.ok(scheduleService.fetchScheduleModelById(scheduleId));
     }
 
-    @GetMapping("schedule/current")
-    public ResponseEntity<String> fetchCurrentSemester(){
-        return ResponseEntity.ok("현재 해당되는 학기를 가져옵니다.");
+    @PostMapping("schedule/{teamId}")
+    public ResponseEntity<String> executeScheduleCreating(@PathVariable Long teamId, @RequestBody ScheduleModel scheduleModel){
+        return scheduleService.createScheduleByModelAndTeamId(scheduleModel, teamId);
     }
 
-    @PostMapping("schedule")
-    public ResponseEntity<String> executeScheduleCreating(@RequestBody ScheduleModel scheduleModel){
-        return ResponseEntity.ok("스케쥴 한 단위를 제작합니다.");
+    @PutMapping("schedule/{teamId}/{scheduleId}")
+    public ResponseEntity<String> executeScheduleUpdating(@PathVariable Long teamId, @PathVariable Long scheduleId, @RequestBody ScheduleModel scheduleModel){
+        return scheduleService.updateScheduleByModelAndTeamId(scheduleModel, teamId, scheduleId);
     }
 
-    @PutMapping("schedule")
-    public ResponseEntity<String> executeScheduleUpdating(@RequestBody ScheduleModel scheduleModel){
-        return ResponseEntity.ok("스케쥴 한 단위를 수정합니다.");
+    @PutMapping("schedule/confirm/{scheduleId}")
+    public ResponseEntity<String> executeScheduleRecognizing(@PathVariable Long scheduleId, @RequestBody ConfirmModel confirmModel){
+        return scheduleService.updateAdminMessageAndStatus(scheduleId, confirmModel);
     }
 
-    @PutMapping("schedule/recognized/{scheduleId}")
-    public ResponseEntity<String> executeScheduleRecognizing(@PathVariable Long scheduleId){
-        return ResponseEntity.ok("스케쥴을 지도 교수 혹은 관리자에게 검토 받았습니다. 인정 혹은 미흡 둘 다 해당됨.");
-    }
-
-    @DeleteMapping("schedule/{scheduleId}")
-    public ResponseEntity<String> executeScheduleRemoving(@PathVariable Long scheduleId){
-        return ResponseEntity.ok("스케쥴 한 단위를 삭제합니다.");
+    @DeleteMapping("schedules")
+    public ResponseEntity<String> executeScheduleRemoving(@RequestBody List<Long> scheduleIds){
+        return scheduleService.deleteScheduleByIdList(scheduleIds);
     }
 
     @DeleteMapping("schedules/{teamId}")
     public ResponseEntity<String> executeSubjectRemovingByTeamId(@PathVariable Long teamId){
-        return ResponseEntity.ok("관리자가 이제 볼 필요 없는 팀의 아이디로 스케쥴을 삭제합니다.");
+        return scheduleService.deleteScheduleByTeam(teamId);
     }
 }
