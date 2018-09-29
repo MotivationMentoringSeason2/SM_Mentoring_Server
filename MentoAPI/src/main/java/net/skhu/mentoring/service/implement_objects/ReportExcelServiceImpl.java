@@ -36,8 +36,8 @@ import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
-import java.text.SimpleDateFormat;
 import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
@@ -67,8 +67,6 @@ public class ReportExcelServiceImpl implements ReportExcelService {
         Optional<Team> team = teamRepository.findById(teamId);
         if(team.isPresent()) {
             List<Report> reports = reportRepository.findByScheduleStatusAndScheduleTeam(ResultStatus.PERMIT, team.get());
-            SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd");
-            SimpleDateFormat timeFormat = new SimpleDateFormat("a hh:mm");
 
             XSSFColor titleColor = new XSSFColor(new Color(152, 251, 152));
             XSSFColor myColor = new XSSFColor(new Color(135, 206, 250));
@@ -132,7 +130,12 @@ public class ReportExcelServiceImpl implements ReportExcelService {
                 Schedule schedule = report.getSchedule();
                 Optional<ClassPhoto> classPhoto = classPhotoRepository.findByReport(reports.get(k));
                 LocalDateTime presentDate = report.getPresentDate();
-                XSSFSheet sheet = workbook.createSheet(String.format("%d%02d%02d_보고서", presentDate.getMonthValue(), presentDate.getDayOfMonth()));
+                XSSFSheet sheet = workbook.createSheet(String.format("%d%02d%02d_보고서", presentDate.getYear(), presentDate.getMonthValue(), presentDate.getDayOfMonth()));
+
+                workbook.getSheetAt(k).setColumnWidth(0, 3452);
+                workbook.getSheetAt(k).setColumnWidth(1, 6213);
+                workbook.getSheetAt(k).setColumnWidth(2, 3452);
+                workbook.getSheetAt(k).setColumnWidth(3, 6213);
 
                 if(classPhoto.isPresent()) {
                     Row row = sheet.createRow(0);
@@ -156,15 +159,15 @@ public class ReportExcelServiceImpl implements ReportExcelService {
 
                     row = sheet.createRow(3);
                     createCell(row, 0, "제출 일자", entityStyle, (short) 360);
-                    createCell(row, 1, dateFormat.format(report.getPresentDate()), attributeStyle, (short) 0);
+                    createCell(row, 1, report.getPresentDate().format(DateTimeFormatter.ofPattern("yyyy-MM-dd")), attributeStyle, (short) 0);
                     createCell(row, 2, "진행 장소", entityStyle, (short) 0);
                     createCell(row, 3, report.getClassPlace(), attributeStyle, (short) 0);
 
                     row = sheet.createRow(4);
                     createCell(row, 0, "진행 일자", entityStyle, (short) 360);
-                    createCell(row, 1, schedule.getStartDate().toString(), attributeStyle, (short) 0);
+                    createCell(row, 1, schedule.getStartDate().format(DateTimeFormatter.ofPattern("yyyy-MM-dd")), attributeStyle, (short) 0);
                     createCell(row, 2, "진행 시간", entityStyle, (short) 0);
-                    createCell(row, 3, String.format("%s ~ %s", timeFormat.format(schedule.getStartDate()), timeFormat.format(schedule.getEndDate())), attributeStyle, (short) 0);
+                    createCell(row, 3, String.format("%s ~ %s", schedule.getStartDate().format(DateTimeFormatter.ofPattern("a hh:mm")), schedule.getEndDate().format(DateTimeFormatter.ofPattern("a hh:mm"))), attributeStyle, (short) 0);
 
                     row = sheet.createRow(5);
                     createCell(row, 0, "결석 인원", entityStyle, (short) 360);

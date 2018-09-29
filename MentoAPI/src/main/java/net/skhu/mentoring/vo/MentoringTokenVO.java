@@ -11,9 +11,10 @@ import net.skhu.mentoring.domain.Team;
 public class MentoringTokenVO {
     private Long id;
     private String name;
+    private String mento;
     private String status;
 
     public static MentoringTokenVO builtToVO(Team team, String status){
-        return new MentoringTokenVO(team.getId(), team.getName(), status);
+        return new MentoringTokenVO(team.getId(), team.getName(), team.getMento(), status);
     }
 }

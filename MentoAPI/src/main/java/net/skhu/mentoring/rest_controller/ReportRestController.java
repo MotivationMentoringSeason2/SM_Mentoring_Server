@@ -19,6 +19,7 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestPart;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.multipart.MultipartFile;
 
@@ -60,7 +61,7 @@ public class ReportRestController {
     }
 
     @PostMapping(value = "report/{scheduleId}", consumes = {"multipart/form-data"})
-    public ResponseEntity<String> executeReportCreating(@PathVariable Long scheduleId, @RequestBody ReportModel reportModel, MultipartFile photoFile) throws IOException {
+    public ResponseEntity<String> executeReportCreating(@PathVariable Long scheduleId, @RequestPart("reportModel") ReportModel reportModel, @RequestPart("photoFile") MultipartFile photoFile) throws IOException {
         return reportService.createReportWithScheduleId(scheduleId, reportModel, photoFile);
     }
 
@@ -70,7 +71,7 @@ public class ReportRestController {
     }
 
     @PutMapping(value = "report/{scheduleId}", consumes = {"multipart/form-data"})
-    public ResponseEntity<String> executeReportUpdating(@PathVariable Long scheduleId, @RequestBody ReportModel reportModel, MultipartFile photoFile) throws IOException {
+    public ResponseEntity<String> executeReportUpdating(@PathVariable Long scheduleId, @RequestPart("reportModel") ReportModel reportModel, @RequestPart("photoFile") MultipartFile photoFile) throws IOException {
         return reportService.updateReportWithScheduleId(scheduleId, reportModel, photoFile);
     }
 

@@ -15,6 +15,7 @@ import java.time.LocalTime;
 @AllArgsConstructor
 public class ReportBriefVO {
     private Long id;
+    private Long scheduleId;
     private String classSubject;
     private String classType;
     private LocalDate classDate;
@@ -29,7 +30,7 @@ public class ReportBriefVO {
             LocalDate classDate = schedule.getStartDate().toLocalDate();
             LocalTime startTime = schedule.getStartDate().toLocalTime();
             LocalTime endTime = schedule.getEndDate().toLocalTime();
-            return new ReportBriefVO(report.getId(), report.getClassSubject(), schedule.getMethod(), classDate, startTime, endTime, schedule.getStatus(), schedule.getAdminMessage());
+            return new ReportBriefVO(report.getId(), schedule.getId(), report.getClassSubject(), schedule.getMethod(), classDate, startTime, endTime, schedule.getStatus(), schedule.getAdminMessage());
         }
         else return null;
     }
