@@ -5,6 +5,7 @@ import net.skhu.mentoring.domain.Account;
 import net.skhu.mentoring.domain.Employee;
 import net.skhu.mentoring.domain.Professor;
 import net.skhu.mentoring.domain.Student;
+import net.skhu.mentoring.enumeration.StudentStatus;
 import net.skhu.mentoring.enumeration.UserType;
 import net.skhu.mentoring.model.AccountPagination;
 import net.skhu.mentoring.model.OptionModel;
@@ -174,6 +175,43 @@ public class AdminServiceImpl implements AdminService {
                     return new ResponseEntity<>("직원은 회장과 학과장 설정이 필요 없습니다.", HttpStatus.NON_AUTHORITATIVE_INFORMATION);
             }
         } else return new ResponseEntity<>("존재하지 않는 회원입니다.", HttpStatus.NON_AUTHORITATIVE_INFORMATION);
+    }
+
+    @Override
+    @Transactional
+    public ResponseEntity<?> executeAppointMentoring(final Principal principal, final HttpServletRequest request, final String userId, final String method) {
+        if(!this.tokenValidation(principal, request)) return ResponseEntity.noContent().build();
+        Optional<Account> account = accountRepository.findByIdentity(userId);
+        if(account.isPresent()){
+            Account tmpAccount = account.get();
+            if(tmpAccount.getType().equals(UserType.STUDENT)){
+                Student student = studentRepository.findByIdentity(userId).get();
+                switch(method){
+                    case "mento" :
+                        student.setStatus(StudentStatus.MENTO);
+                        studentRepository.save(student);
+                        return ResponseEntity.ok(String.format("%s 님의 권한이 멘토로 바뀌었습니다.", student.getName()));
+                    case "menti" :
+                        student.setStatus(StudentStatus.MENTI);
+                        studentRepository.save(student);
+                        return ResponseEntity.ok(String.format("%s 님의 권한이 멘티로 바뀌었습니다.", student.getName()));
+                }
+            }
+            return new ResponseEntity<>(String.format("%s 님은 학생이 아니어 멘토링 등급으로 바꿀 수 없습니다.", tmpAccount.getName()), HttpStatus.NON_AUTHORITATIVE_INFORMATION);
+        }
+        else return new ResponseEntity<>("계정 정보가 존재하지 않습니다. 다시 시도 바랍니다.", HttpStatus.NON_AUTHORITATIVE_INFORMATION);
+    }
+
+    @Override
+    @Transactional
+    public ResponseEntity<?> executeResettingStudentStatus(final Principal principal, final HttpServletRequest request) {
+        if(!this.tokenValidation(principal, request)) return ResponseEntity.noContent().build();
+        List<Student> students = studentRepository.findAll();
+        for(Student student : students){
+            student.setStatus(StudentStatus.NORMAL);
+            studentRepository.save(student);
+        }
+        return new ResponseEntity<>("모든 학생의 정보가 일반 학생으로 돌아왔습니다.", HttpStatus.OK);
     }
 
     @Override

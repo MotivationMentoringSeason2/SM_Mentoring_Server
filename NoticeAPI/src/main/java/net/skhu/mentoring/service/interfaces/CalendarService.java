@@ -8,5 +8,6 @@ import java.util.List;
 
 public interface CalendarService {
     List<CalendarVO> fetchCalendarSchedules();
+    CalendarVO fetchCurrentSchedule();
     ResponseEntity<String> executeUpdatingCalendarSchedule(final String userId, final CalendarModel calendarModel);
 }

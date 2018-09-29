@@ -57,6 +57,16 @@ public class AdminRestController {
         }
     }
 
+    @PutMapping("account/mentoring/{user}/{role}")
+    public ResponseEntity<?> executeApplicateMentoring(Principal principal, HttpServletRequest request, @PathVariable String user, @PathVariable String role){
+        return adminService.executeAppointMentoring(principal, request, user, role);
+    }
+
+    @PutMapping("account/student/reset")
+    public ResponseEntity<?> executeStudentStatusResetting(Principal principal, HttpServletRequest request){
+        return adminService.executeResettingStudentStatus(principal, request);
+    }
+
     @GetMapping("account/options/search_by")
     public ResponseEntity<?> fetchSearchByOptions(Principal principal, HttpServletRequest request){
         return ResponseEntity.ok(adminService.getSearchByModel(principal, request));

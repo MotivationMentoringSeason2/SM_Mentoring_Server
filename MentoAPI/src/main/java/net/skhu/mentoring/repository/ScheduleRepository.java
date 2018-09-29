@@ -10,6 +10,7 @@ import java.util.List;
 
 @Repository
 public interface ScheduleRepository extends JpaRepository<Schedule, Long> {
+    List<Schedule> findByTeam(Team team);
     List<Schedule> findByTeamAndStatus(Team team, ResultStatus status);
     boolean existsByIdIn(List<Long> id);
     boolean existsByTeam(Team team);
