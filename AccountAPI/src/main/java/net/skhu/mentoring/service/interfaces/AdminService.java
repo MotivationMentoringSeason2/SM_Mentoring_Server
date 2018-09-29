@@ -15,5 +15,7 @@ public interface AdminService {
     List<BriefAccountVO> fetchAccountListWithPagination(final Principal principal, final HttpServletRequest request, final AccountPagination accountPagination);
     ResponseEntity<?> fetchAccountView(final Principal principal, final HttpServletRequest request, final Long id);
     ResponseEntity<?> executeAppointChairman(final Principal principal, final HttpServletRequest request, final Long id);
+    ResponseEntity<?> executeAppointMentoring(final Principal principal, final HttpServletRequest request, final String userId, final String method);
+    ResponseEntity<?> executeResettingStudentStatus(final Principal principal, final HttpServletRequest request);
     ResponseEntity<?> executeReleaseChairman(final Principal principal, final HttpServletRequest request, final Long id);
 }

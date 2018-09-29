@@ -47,7 +47,7 @@ public class ScheduleServiceImpl implements ScheduleService {
     public List<ScheduleBriefVO> fetchBriefListByTeamId(final Long teamId) {
         Optional<Team> team = teamRepository.findById(teamId);
         if(team.isPresent()){
-            List<Schedule> schedules = scheduleRepository.findByTeamAndStatus(team.get(), ResultStatus.PERMIT);
+            List<Schedule> schedules = scheduleRepository.findByTeam(team.get());
             return schedules.stream()
                     .map(schedule -> ScheduleBriefVO.builtToVO(schedule))
                     .collect(Collectors.toList());
@@ -125,7 +125,7 @@ public class ScheduleServiceImpl implements ScheduleService {
     public ResponseEntity<String> deleteScheduleByIdList(final List<Long> scheduleIds) {
         if(scheduleRepository.existsByIdIn(scheduleIds)){
             scheduleRepository.deleteByIdIn(scheduleIds);
-            return new ResponseEntity<>("선택하신 수업 시간 목록이 삭제 되었습니다. 스케쥴은 그대로 남아 있으니 이를 토대로 다시 작성하시면 됩니다.", HttpStatus.OK);
+            return new ResponseEntity<>("선택하신 수업 시간 목록이 삭제 되었습니다.", HttpStatus.OK);
         } else return new ResponseEntity<>("선택하신 수업 시간이 존재하지 않습니다. 다시 시도 바랍니다.", HttpStatus.NON_AUTHORITATIVE_INFORMATION);
     }
 

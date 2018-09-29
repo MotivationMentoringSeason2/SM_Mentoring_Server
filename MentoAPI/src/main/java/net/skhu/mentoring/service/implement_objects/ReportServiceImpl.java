@@ -32,9 +32,6 @@ public class ReportServiceImpl implements ReportService {
     private TeamRepository teamRepository;
 
     @Autowired
-    private SemesterRepository semesterRepository;
-
-    @Autowired
     private ScheduleRepository scheduleRepository;
 
     @Autowired

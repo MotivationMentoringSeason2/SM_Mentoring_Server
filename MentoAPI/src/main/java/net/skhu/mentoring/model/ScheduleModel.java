@@ -12,12 +12,13 @@ import java.time.LocalTime;
 @NoArgsConstructor
 @AllArgsConstructor
 public class ScheduleModel {
+    private Long teamId;
     private LocalDate classDate;
     private LocalTime startTime;
     private LocalTime endTime;
     private String method;
 
     public static ScheduleModel builtToVO(Schedule schedule){
-        return new ScheduleModel(schedule.getStartDate().toLocalDate(), schedule.getStartDate().toLocalTime(), schedule.getEndDate().toLocalTime(), schedule.getMethod());
+        return new ScheduleModel(schedule.getTeam().getId(), schedule.getStartDate().toLocalDate(), schedule.getStartDate().toLocalTime(), schedule.getEndDate().toLocalTime(), schedule.getMethod());
     }
 }

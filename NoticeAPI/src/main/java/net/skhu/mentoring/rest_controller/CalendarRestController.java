@@ -27,6 +27,11 @@ public class CalendarRestController {
         return ResponseEntity.ok(calendarService.fetchCalendarSchedules());
     }
 
+    @GetMapping("calendar/current")
+    public ResponseEntity<CalendarVO> fetchCurrentSchedule(){
+        return ResponseEntity.ok(calendarService.fetchCurrentSchedule());
+    }
+
     @PutMapping("calendar/{userId}")
     public ResponseEntity<String> executeUpdateCalendarSchedule(@PathVariable String userId, @RequestBody CalendarModel calendarModel){
         return calendarService.executeUpdatingCalendarSchedule(userId, calendarModel);

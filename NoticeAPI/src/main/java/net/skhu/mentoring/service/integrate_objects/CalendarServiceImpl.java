@@ -28,6 +28,12 @@ public class CalendarServiceImpl implements CalendarService {
     }
 
     @Override
+    public CalendarVO fetchCurrentSchedule() {
+        Optional<Calendar> currentCalendar = calendarRepository.findByCurrentCalendar();
+        return currentCalendar.isPresent() ? CalendarVO.builtToVO(currentCalendar.get()) : null;
+    }
+
+    @Override
     @Transactional
     public ResponseEntity<String> executeUpdatingCalendarSchedule(final String userId, final CalendarModel calendarModel) {
         Optional<Calendar> calendar = calendarRepository.findById(calendarModel.getId());
