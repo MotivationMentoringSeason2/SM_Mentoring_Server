@@ -12,6 +12,7 @@ import net.skhu.mentoring.domain.Team;
 @AllArgsConstructor
 public class ReportModel {
     private Long teamId;
+    private Long scheduleId;
     private String classPlace;
     private String classSubject;
     private String classBriefing;
@@ -20,6 +21,6 @@ public class ReportModel {
     public static ReportModel builtToModel(Report report){
         Schedule schedule = report.getSchedule();
         Team team = schedule != null ? schedule.getTeam() : null;
-        return new ReportModel(team != null ? team.getId() : 0, report.getClassPlace(), report.getClassSubject(), report.getClassBriefing(), report.getAbsentPerson());
+        return new ReportModel(team != null ? team.getId() : 0, schedule != null ? schedule.getId() : 0, report.getClassPlace(), report.getClassSubject(), report.getClassBriefing(), report.getAbsentPerson());
     }
 }

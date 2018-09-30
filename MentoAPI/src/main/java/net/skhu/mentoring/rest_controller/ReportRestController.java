@@ -1,5 +1,6 @@
 package net.skhu.mentoring.rest_controller;
 
+import net.skhu.mentoring.domain.ClassPhoto;
 import net.skhu.mentoring.model.ReportModel;
 import net.skhu.mentoring.service.interfaces.ReportExcelService;
 import net.skhu.mentoring.service.interfaces.ReportService;
@@ -10,6 +11,9 @@ import net.skhu.mentoring.vo.ReportListVO;
 import net.skhu.mentoring.vo.ReportViewVO;
 import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpHeaders;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.DeleteMapping;
@@ -45,6 +49,23 @@ public class ReportRestController {
     @Autowired
     private ReportExcelService reportExcelService;
 
+    private HttpHeaders generateImageHeader(ClassPhoto classPhoto) {
+        HttpHeaders header = new HttpHeaders();
+        switch (classPhoto.getFileSuffix()) {
+            case "JPG" :
+            case "JPEG" :
+                header.setContentType(MediaType.IMAGE_JPEG);
+                break;
+            case "PNG" :
+                header.setContentType(MediaType.IMAGE_PNG);
+                break;
+            case "GIF" :
+                header.setContentType(MediaType.IMAGE_GIF);
+                break;
+        }
+        return header;
+    }
+
     @GetMapping("reports/{teamId}")
     public ResponseEntity<ReportListVO> fetchReportListByTeamId(@PathVariable Long teamId){
         return ResponseEntity.ok(ReportListVO.builtToVO(reportService.fetchReportListByTeamId(teamId), scheduleService.fetchMentoringActivityByTeamId(teamId)));
@@ -58,6 +79,16 @@ public class ReportRestController {
     @GetMapping("report/model/{reportId}")
     public ResponseEntity<ReportModel> fetchReportModelById(@PathVariable Long reportId){
         return ResponseEntity.ok(reportService.fetchReportModelById(reportId));
+    }
+
+    @GetMapping("report/photo/{photoId}")
+    public ResponseEntity<?> fetchEachProfile(@PathVariable Long photoId) {
+        ClassPhoto classPhoto = reportService.fetchClassPhotoById(photoId);
+        if (classPhoto != null) {
+            HttpHeaders headers = this.generateImageHeader(classPhoto);
+            return new ResponseEntity<>(classPhoto.getFileData(), headers, HttpStatus.OK);
+        }
+        return new ResponseEntity<Void>(HttpStatus.NO_CONTENT);
     }
 
     @PostMapping(value = "report/{scheduleId}", consumes = {"multipart/form-data"})
@@ -76,7 +107,7 @@ public class ReportRestController {
     }
 
     @DeleteMapping("reports")
-    public ResponseEntity<String> executeReportRemoving(@PathVariable List<Long> reportIds){
+    public ResponseEntity<String> executeReportRemoving(@RequestBody List<Long> reportIds){
         return reportService.deleteReportByIdList(reportIds);
     }
 
