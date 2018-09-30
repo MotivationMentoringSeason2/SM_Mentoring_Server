@@ -12,5 +12,5 @@ import java.util.Optional;
 public interface ImageRepository extends JpaRepository<Image, Long> {
     List<Image> findByPostId(Long postId);
     Optional<Image> findByFileNameAndPost(String fileName, Post post);
-    void deleteByIdIn(List<Long> id);
+    void deleteByPost(Post post);
 }
