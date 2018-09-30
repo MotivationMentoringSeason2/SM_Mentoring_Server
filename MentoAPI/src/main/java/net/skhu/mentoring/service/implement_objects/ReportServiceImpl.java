@@ -4,6 +4,7 @@ import net.skhu.mentoring.domain.ClassPhoto;
 import net.skhu.mentoring.domain.Report;
 import net.skhu.mentoring.domain.Schedule;
 import net.skhu.mentoring.domain.Team;
+import net.skhu.mentoring.enumeration.ResultStatus;
 import net.skhu.mentoring.model.ReportModel;
 import net.skhu.mentoring.repository.ClassPhotoRepository;
 import net.skhu.mentoring.repository.ReportRepository;
@@ -42,7 +43,7 @@ public class ReportServiceImpl implements ReportService {
 
     private String getFileSuffix(final String fileName) {
         int infix = fileName.lastIndexOf('.');
-        return fileName.substring(infix, fileName.length());
+        return fileName.substring(infix + 1, fileName.length()).toUpperCase();
     }
 
     private void uploadingReportPhotoFile(final MultipartFile photoFile, final Report report) throws IOException {
@@ -85,6 +86,13 @@ public class ReportServiceImpl implements ReportService {
     public ReportModel fetchReportModelById(final Long reportId) {
         Optional<Report> report = reportRepository.findById(reportId);
         if(report.isPresent()) return ReportModel.builtToModel(report.get());
+        else return null;
+    }
+
+    @Override
+    public ClassPhoto fetchClassPhotoById(final Long id) {
+        Optional<ClassPhoto> classPhoto = classPhotoRepository.findById(id);
+        if(classPhoto.isPresent()) return classPhoto.get();
         else return null;
     }
 
@@ -135,7 +143,15 @@ public class ReportServiceImpl implements ReportService {
     @Transactional
     public ResponseEntity<String> deleteReportByIdList(final List<Long> reportIds) {
         if(reportRepository.existsByIdIn(reportIds)){
-            reportRepository.deleteByIdIn(reportIds);
+            for(Long id : reportIds){
+                Report tmpReport = reportRepository.getOne(id);
+                if(tmpReport != null) {
+                    Schedule schedule = tmpReport.getSchedule();
+                    schedule.setAdminMessage("");
+                    schedule.setStatus(ResultStatus.LOADING);
+                    scheduleRepository.save(schedule);
+                }
+            }
             return new ResponseEntity<>("선택하신 보고서의 목록이 삭제 되었습니다. 스케쥴은 그대로 남아 있으니 이를 토대로 다시 작성하시면 됩니다.", HttpStatus.OK);
         } else return new ResponseEntity<>("선택하신 보고서가 존재하지 않습니다. 다시 시도 바랍니다.", HttpStatus.NON_AUTHORITATIVE_INFORMATION);
     }

@@ -1,5 +1,6 @@
 package net.skhu.mentoring.service.interfaces;
 
+import net.skhu.mentoring.domain.ClassPhoto;
 import net.skhu.mentoring.model.ReportModel;
 import net.skhu.mentoring.vo.ReportBriefVO;
 import net.skhu.mentoring.vo.ReportViewVO;
@@ -13,6 +14,7 @@ public interface ReportService {
     List<ReportBriefVO> fetchReportListByTeamId(final Long teamId);
     ReportViewVO fetchReportViewById(final Long reportId);
     ReportModel fetchReportModelById(final Long reportId);
+    ClassPhoto fetchClassPhotoById(final Long id);
 
     ResponseEntity<String> createReportWithScheduleId(final Long scheduleId, final ReportModel reportModel, final MultipartFile photoFile) throws IOException;
     ResponseEntity<String> updateReportWithScheduleId(final Long scheduleId, final ReportModel reportModel, final MultipartFile photoFile) throws IOException;
