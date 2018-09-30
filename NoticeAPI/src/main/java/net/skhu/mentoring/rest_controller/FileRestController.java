@@ -20,6 +20,7 @@ import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.multipart.MultipartFile;
 
 import javax.servlet.http.HttpServletResponse;
+import java.io.BufferedOutputStream;
 import java.io.IOException;
 import java.io.UnsupportedEncodingException;
 import java.net.URLEncoder;
@@ -63,12 +64,15 @@ public class FileRestController {
     }
 
     @GetMapping("file/{fileId}")
-    public void fetchFileByIdDownload(@PathVariable Long fileId, HttpServletResponse response) throws UnsupportedEncodingException {
+    public void fetchFileByIdDownload(@PathVariable Long fileId, HttpServletResponse response) throws IOException {
         File file = noticeFileService.fetchByNoticeFileId(fileId);
         if(file != null) {
             String fileName = URLEncoder.encode(file.getFileName(), "UTF-8");
             response.setContentType("application/octet-stream");
             response.setHeader("Content-Disposition", "attachment;filename=" + fileName + ";");
+            try(BufferedOutputStream output=new BufferedOutputStream(response.getOutputStream())){
+                output.write(file.getFileData());
+            }
         }
     }
 
@@ -110,13 +114,13 @@ public class FileRestController {
         return noticeFileService.executeNoticeFileRemovingMultiple(ids);
     }
 
-    @DeleteMapping("file/post/{postId}")
+    @DeleteMapping("files/post/{postId}")
     public ResponseEntity<String> executeRemovingFileByPostId(@PathVariable Long postId){
         return noticeFileService.executeNoticeFileRemovingByPostId(postId);
     }
 
-    @DeleteMapping("images")
-    public ResponseEntity<String> executeRemovingImageMultiple(@PathVariable List<Long> ids){
-        return noticeFileService.executeNoticeImageRemovingMultiple(ids);
+    @DeleteMapping("images/post/{postId}")
+    public ResponseEntity<String> executeRemovingImageByPost(@PathVariable Long postId){
+        return noticeFileService.executeNoticeImageRemovingByPost(postId);
     }
 }

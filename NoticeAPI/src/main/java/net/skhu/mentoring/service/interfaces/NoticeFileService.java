@@ -19,5 +19,5 @@ public interface NoticeFileService {
     ResponseEntity<String> executeNoticeFileRemoving(final Long fileId);
     ResponseEntity<String> executeNoticeFileRemovingMultiple(final List<Long> ids);
     ResponseEntity<String> executeNoticeFileRemovingByPostId(final Long postId);
-    ResponseEntity<String> executeNoticeImageRemovingMultiple(final List<Long> ids);
+    ResponseEntity<String> executeNoticeImageRemovingByPost(final Long postId);
 }

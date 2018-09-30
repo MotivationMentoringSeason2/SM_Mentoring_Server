@@ -42,7 +42,7 @@ public class NoticeFileServiceImpl implements NoticeFileService {
 
     @Override
     public List<Long> fetchByNoticePostIdImageIdList(final Long postId) {
-        return fileRepository.findByPostId(postId).stream()
+        return imageRepository.findByPostId(postId).stream()
                 .map(image -> image.getId())
                 .collect(Collectors.toList());
     }
@@ -150,8 +150,12 @@ public class NoticeFileServiceImpl implements NoticeFileService {
     }
 
     @Override
-    public ResponseEntity<String> executeNoticeImageRemovingMultiple(final List<Long> ids) {
-        imageRepository.deleteByIdIn(ids);
-        return ResponseEntity.ok("현재 선택하신 이미지들이 삭제 되었습니다.");
+    @Transactional
+    public ResponseEntity<String> executeNoticeImageRemovingByPost(final Long postId) {
+        Optional<Post> post = postRepository.findById(postId);
+        if(post.isPresent()){
+            imageRepository.deleteByPost(post.get());
+            return ResponseEntity.ok("현재 선택하신 이미지들이 삭제 되었습니다.");
+        } else return new ResponseEntity<>("선택하신 게시물이 존재하지 않아 삭제를 진행하지 않았습니다.", HttpStatus.NON_AUTHORITATIVE_INFORMATION);
     }
 }
