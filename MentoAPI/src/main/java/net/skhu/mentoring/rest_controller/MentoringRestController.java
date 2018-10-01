@@ -1,5 +1,6 @@
 package net.skhu.mentoring.rest_controller;
 
+import net.skhu.mentoring.domain.TeamAdvertiseFile;
 import net.skhu.mentoring.enumeration.ResultStatus;
 import net.skhu.mentoring.model.MentiApplicationModel;
 import net.skhu.mentoring.model.MentoApplicationModel;
@@ -24,7 +25,10 @@ import org.springframework.web.bind.annotation.RequestPart;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.multipart.MultipartFile;
 
+import javax.servlet.http.HttpServletResponse;
+import java.io.BufferedOutputStream;
 import java.io.IOException;
+import java.net.URLEncoder;
 import java.util.List;
 
 @RestController
@@ -41,6 +45,11 @@ public class MentoringRestController {
     public ResponseEntity<?> fetchTeamListBySemesterId(@PathVariable Long semesterId){
         List<MentoVO> mentoVOs = teamService.fetchMentoListBySemesterId(semesterId);
         return mentoVOs != null ? ResponseEntity.ok(mentoVOs) : ResponseEntity.noContent().build();
+    }
+
+    @GetMapping("teams/application/admin")
+    public ResponseEntity<?> fetchApplicationListCurrentSemester(){
+        return ResponseEntity.ok(teamService.fetchCurrentSemesterMentoApplication());
     }
 
     @GetMapping("teams/status/{status}")
@@ -75,6 +84,19 @@ public class MentoringRestController {
     public ResponseEntity<MentoringTokenVO> fetchCurrentMentoringTokenByMento(@PathVariable String userId){
         MentoringTokenVO mentoringTokenVO = teamService.fetchCurrentMentoringToken(userId);
         return mentoringTokenVO != null ? ResponseEntity.ok(mentoringTokenVO) : ResponseEntity.noContent().build();
+    }
+
+    @GetMapping("team/advFile/{advFileId}")
+    public void executeAdvertiseFileDownload(@PathVariable Long advFileId, HttpServletResponse response) throws Exception{
+        TeamAdvertiseFile teamAdvertiseFile = teamService.fetchTeamAdvertiseData(advFileId);
+        if(teamAdvertiseFile != null) {
+            String fileName = URLEncoder.encode(teamAdvertiseFile.getFileName(), "UTF-8");
+            response.setContentType("application/octet-stream");
+            response.setHeader("Content-Disposition", "attachment;filename=" + fileName + ";");
+            try (BufferedOutputStream output = new BufferedOutputStream(response.getOutputStream())) {
+                output.write(teamAdvertiseFile.getFileData());
+            }
+        }
     }
 
     @PostMapping(value = "team/{mento}", consumes = {"multipart/form-data"})

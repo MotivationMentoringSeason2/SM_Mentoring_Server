@@ -195,6 +195,10 @@ public class AdminServiceImpl implements AdminService {
                         student.setStatus(StudentStatus.MENTI);
                         studentRepository.save(student);
                         return ResponseEntity.ok(String.format("%s 님의 권한이 멘티로 바뀌었습니다.", student.getName()));
+                    case "none" :
+                        student.setStatus(StudentStatus.NORMAL);
+                        studentRepository.save(student);
+                        return ResponseEntity.ok(String.format("%s 님의 권한이 일반 학생으로 바뀌었습니다.", student.getName()));
                 }
             }
             return new ResponseEntity<>(String.format("%s 님은 학생이 아니어 멘토링 등급으로 바꿀 수 없습니다.", tmpAccount.getName()), HttpStatus.NON_AUTHORITATIVE_INFORMATION);

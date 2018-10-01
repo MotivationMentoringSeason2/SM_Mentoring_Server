@@ -26,6 +26,7 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
     @Override
     public void configure(WebSecurity web) throws Exception {
         web.ignoring().antMatchers(HttpMethod.GET, "/AccountAPI/resource/**");
+        web.ignoring().antMatchers(HttpMethod.POST, "/AccountAPI/resource/**");
         web.ignoring().antMatchers(HttpMethod.GET, "/AccountAPI/guest/**");
         web.ignoring().antMatchers(HttpMethod.POST, "/AccountAPI/guest/**");
         web.ignoring().antMatchers(HttpMethod.OPTIONS, "/**");
