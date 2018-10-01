@@ -12,6 +12,7 @@ import net.skhu.mentoring.repository.SubjectRepository;
 import net.skhu.mentoring.repository.TeamAdvertiseRepository;
 import net.skhu.mentoring.repository.TeamRepository;
 import net.skhu.mentoring.service.interfaces.TeamService;
+import net.skhu.mentoring.vo.AdminAppVO;
 import net.skhu.mentoring.vo.CareerBriefVO;
 import net.skhu.mentoring.vo.MentoVO;
 import net.skhu.mentoring.vo.MentoringTokenVO;
@@ -138,6 +139,25 @@ public class TeamServiceImpl implements TeamService {
             if(team.isPresent()) return MentoApplicationModel.builtToVO(team.get());
             else return null;
         } else return null;
+    }
+
+    @Override
+    public List<AdminAppVO> fetchCurrentSemesterMentoApplication() {
+        Optional<Semester> semester = semesterRepository.findByCurrentSemester();
+        if(semester.isPresent()) {
+            List<Team> teams = teamRepository.findBySemester(semester.get());
+            return teams.stream()
+                    .map(team -> AdminAppVO.builtToVO(this.fetchMentoInfoByTeamId(team.getId()), this.fetchMentoringTeamPersonByTeamId(team.getId())))
+                    .collect(Collectors.toList());
+        }
+        else return null;
+    }
+
+    @Override
+    public TeamAdvertiseFile fetchTeamAdvertiseData(final Long advFileId) {
+        Optional<TeamAdvertiseFile> advFile = teamAdvertiseRepository.findById(advFileId);
+        if(advFile.isPresent()) return advFile.get();
+        else return null;
     }
 
     @Override

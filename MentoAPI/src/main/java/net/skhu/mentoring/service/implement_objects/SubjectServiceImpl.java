@@ -24,13 +24,6 @@ public class SubjectServiceImpl implements SubjectService {
     }
 
     @Override
-    public Subject fetchBySubjectId(final Long subjectId) {
-        Optional<Subject> subject = subjectRepository.findById(subjectId);
-        if(subject.isPresent()) return subject.get();
-        else return null;
-    }
-
-    @Override
     @Transactional
     public ResponseEntity<String> executeCreateSubject(final SubjectModel subjectModel) {
         Optional<Subject> subject = subjectRepository.findByName(subjectModel.getName());

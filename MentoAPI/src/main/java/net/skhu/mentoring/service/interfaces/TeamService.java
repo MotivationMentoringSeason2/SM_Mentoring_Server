@@ -1,7 +1,9 @@
 package net.skhu.mentoring.service.interfaces;
 
+import net.skhu.mentoring.domain.TeamAdvertiseFile;
 import net.skhu.mentoring.enumeration.ResultStatus;
 import net.skhu.mentoring.model.MentoApplicationModel;
+import net.skhu.mentoring.vo.AdminAppVO;
 import net.skhu.mentoring.vo.CareerBriefVO;
 import net.skhu.mentoring.vo.MentoVO;
 import net.skhu.mentoring.vo.MentoringTokenVO;
@@ -20,6 +22,8 @@ public interface TeamService {
     MentoVO fetchMentoInfoByTeamId(final Long teamId);
     PersonVO fetchMentoringTeamPersonByTeamId(final Long teamId);
     MentoApplicationModel fetchUpdateMentoApplicationModel(final String mento);
+    List<AdminAppVO> fetchCurrentSemesterMentoApplication();
+    TeamAdvertiseFile fetchTeamAdvertiseData(final Long advFileId);
 
     ResponseEntity<String> executeMentoApplicate(final MentoApplicationModel mentoApplicationModel, final MultipartFile advFile, final String mento) throws IOException;
     ResponseEntity<String> executeUpdateMentoApplicate(final MentoApplicationModel mentoApplicationModel, final MultipartFile advFile, final String mento) throws IOException;

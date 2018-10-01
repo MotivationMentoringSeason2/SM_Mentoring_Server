@@ -19,6 +19,7 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+import java.util.ArrayList;
 import java.util.List;
 
 @RestController
@@ -93,5 +94,17 @@ public class ResourceRestController {
         BriefAccountVO accountVO = resourceService.fetchBriefAccountInfoByIdentity(identity);
         if(accountVO != null) return ResponseEntity.ok(accountVO);
         else return ResponseEntity.noContent().build();
+    }
+
+    @PostMapping("account/brief")
+    public ResponseEntity<?> fetchBriefAccountInfoAboutMentoring(@RequestBody MentoringModel mentoringModel){
+        List<BriefAccountVO> briefAccountVOs = new ArrayList<BriefAccountVO>();
+        BriefAccountVO accountVO = resourceService.fetchBriefAccountInfoByIdentity(mentoringModel.getMento());
+        if(accountVO != null) briefAccountVOs.add(accountVO);
+        for(String menti : mentoringModel.getMentis()){
+            BriefAccountVO tmpVO = resourceService.fetchBriefAccountInfoByIdentity(menti);
+            if(tmpVO != null) briefAccountVOs.add(tmpVO);
+        }
+        return ResponseEntity.ok(briefAccountVOs);
     }
 }
