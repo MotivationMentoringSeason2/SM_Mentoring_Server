@@ -80,6 +80,12 @@ public class MentoringRestController {
         return mentoApplicationModel != null ? ResponseEntity.ok(mentoApplicationModel) : ResponseEntity.noContent().build();
     }
 
+    @GetMapping("team/admin/token/{teamId}")
+    public ResponseEntity<MentoringTokenVO> fetchAdminMentoringToken(@PathVariable Long teamId){
+        MentoringTokenVO mentoringTokenVO = teamService.fetchAdminMentoringTokenByTeam(teamId);
+        return mentoringTokenVO != null ? ResponseEntity.ok(mentoringTokenVO) : ResponseEntity.noContent().build();
+    }
+
     @GetMapping("team/token/{userId}")
     public ResponseEntity<MentoringTokenVO> fetchCurrentMentoringTokenByMento(@PathVariable String userId){
         MentoringTokenVO mentoringTokenVO = teamService.fetchCurrentMentoringToken(userId);

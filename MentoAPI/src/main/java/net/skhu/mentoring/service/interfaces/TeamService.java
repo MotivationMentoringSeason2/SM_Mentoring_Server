@@ -16,6 +16,7 @@ import java.util.List;
 
 public interface TeamService {
     MentoringTokenVO fetchCurrentMentoringToken(final String userId);
+    MentoringTokenVO fetchAdminMentoringTokenByTeam(final Long teamId);
     List<MentoVO> fetchMentoListBySemesterId(final Long semesterId);
     List<MentoVO> fetchMentoListByStatus(final ResultStatus status);
     List<CareerBriefVO> fetchMentoBriefInfoByIdentity(final String mento);

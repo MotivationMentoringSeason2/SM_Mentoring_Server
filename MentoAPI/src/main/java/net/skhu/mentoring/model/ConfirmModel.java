@@ -10,6 +10,5 @@ import net.skhu.mentoring.enumeration.ResultStatus;
 @AllArgsConstructor
 public class ConfirmModel {
     private ResultStatus status;
-    private String admin;
     private String message;
 }

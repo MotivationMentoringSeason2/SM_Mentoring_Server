@@ -114,7 +114,7 @@ public class ScheduleServiceImpl implements ScheduleService {
         if(schedule.isPresent()) {
             Schedule tmpSchedule = schedule.get();
             tmpSchedule.setStatus(confirmModel.getStatus());
-            tmpSchedule.setAdminMessage(String.format("%s - %s", confirmModel.getAdmin(), confirmModel.getMessage()));
+            tmpSchedule.setAdminMessage(confirmModel.getMessage());
             scheduleRepository.save(tmpSchedule);
             return ResponseEntity.ok("수업 시간 및 보고서에 대한 커멘트를 모두 달았습니다.");
         } else return new ResponseEntity<>("선택하신 수업 일정이 존재하지 않아 수정 작업을 진행하지 않았습니다.", HttpStatus.NON_AUTHORITATIVE_INFORMATION);
