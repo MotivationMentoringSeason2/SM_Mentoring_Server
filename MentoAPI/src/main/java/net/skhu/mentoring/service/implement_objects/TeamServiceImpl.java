@@ -78,6 +78,14 @@ public class TeamServiceImpl implements TeamService {
     }
 
     @Override
+    public MentoringTokenVO fetchAdminMentoringTokenByTeam(final Long teamId) {
+        Optional<Team> team = teamRepository.findById(teamId);
+        if(team.isPresent()){
+            return MentoringTokenVO.builtToVO(team.get(), team.get().getStatus().name());
+        } else return null;
+    }
+
+    @Override
     public List<MentoVO> fetchMentoListBySemesterId(final Long semesterId) {
         Optional<Semester> semester = semesterRepository.findById(semesterId);
         if(semester.isPresent()){

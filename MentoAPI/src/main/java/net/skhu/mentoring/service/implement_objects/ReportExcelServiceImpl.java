@@ -225,10 +225,8 @@ public class ReportExcelServiceImpl implements ReportExcelService {
                     ClassPhoto tmpClassPhoto = classPhoto.get();
                     InputStream inputImage = new ByteArrayInputStream(tmpClassPhoto.getFileData());
                     BufferedImage uploadImage = ImageIO.read(inputImage);
-                    int infix = tmpClassPhoto.getFileName().lastIndexOf('.');
-                    String ext = tmpClassPhoto.getFileName().substring(infix + 1);
                     ByteArrayOutputStream baos = new ByteArrayOutputStream();
-                    if (!ext.equals("png")) {
+                    if (!tmpClassPhoto.getFileSuffix().equals("PNG")) {
                         ImageIO.write(uploadImage, "png", baos);
                     } else {
                         baos.write(tmpClassPhoto.getFileData());
