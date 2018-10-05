@@ -14,6 +14,7 @@ public interface MentiRepository extends JpaRepository<Menti, Long> {
     List<Menti> findByTeam(Team team);
     List<Menti> findByUserIdOrderByIdDesc(String userId);
     Optional<Menti> findByTeamSemesterAndUserId(Semester semester, String userId);
+    Optional<Menti> findByUserId(String userId);
     boolean existsByUserIdAndTeam(String userId, Team team);
     boolean existsByUserIdAndTeamSemester(String userId, Semester semester);
     long countByTeam(Team team);

@@ -1,5 +1,6 @@
 package net.skhu.mentoring.rest_controller;
 import net.skhu.mentoring.domain.StickyNote;
+import net.skhu.mentoring.model.StickyNoteModel;
 import net.skhu.mentoring.service.interfaces.StickyNoteService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
@@ -25,4 +26,13 @@ public class StickyNoteRestController {
         return ResponseEntity.ok(stickyNoteService.fetchAllStickyNoteByTeamId(teamId));
     }
 
+    @GetMapping("stickyNote/identity/{identity}")
+    public ResponseEntity<StickyNoteModel> fetchStickyNoteListByTeamId(@PathVariable String identity){
+        return ResponseEntity.ok(stickyNoteService.findByTeamId(identity));
+    }
+    @PostMapping("stickyNote/create")
+    public ResponseEntity<String> executeScheduleCreating(@RequestBody StickyNoteModel stickyNoteModel){
+        System.out.print(stickyNoteModel);
+        return stickyNoteService.createMemo(stickyNoteModel);
+    }
 }
