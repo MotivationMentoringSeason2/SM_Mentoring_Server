@@ -20,7 +20,7 @@ import org.springframework.web.bind.annotation.RestController;
 import java.io.IOException;
 
 @RestController
-@CrossOrigin(origins = "http://localhost:3000")
+@CrossOrigin(origins = {"http://localhost:3000","http://182.209.240.203:81"})
 @RequestMapping("/AccountAPI/guest")
 public class GuestRestController {
     @Autowired

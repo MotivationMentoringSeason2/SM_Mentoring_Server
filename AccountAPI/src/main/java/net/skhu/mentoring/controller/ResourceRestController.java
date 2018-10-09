@@ -23,7 +23,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 @RestController
-@CrossOrigin(origins = "http://localhost:3000")
+@CrossOrigin(origins = {"http://localhost:3000","http://182.209.240.203:81"})
 @RequestMapping("/AccountAPI/resource")
 public class ResourceRestController {
     @Autowired
