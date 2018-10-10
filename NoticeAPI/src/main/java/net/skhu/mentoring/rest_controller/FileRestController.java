@@ -27,7 +27,7 @@ import java.net.URLEncoder;
 import java.util.List;
 
 @RestController
-@CrossOrigin(origins = {"http://localhost:3000","http://182.209.240.203:81"})
+@CrossOrigin
 @RequestMapping("/NoticeAPI/notice")
 public class FileRestController {
     @Autowired

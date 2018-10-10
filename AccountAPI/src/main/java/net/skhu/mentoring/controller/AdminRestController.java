@@ -26,7 +26,7 @@ import java.net.URLEncoder;
 import java.security.Principal;
 
 @RestController
-@CrossOrigin(origins = {"http://localhost:3000","http://182.209.240.203:81"})
+@CrossOrigin
 @RequestMapping("/AccountAPI/admin")
 public class AdminRestController {
     @Autowired
