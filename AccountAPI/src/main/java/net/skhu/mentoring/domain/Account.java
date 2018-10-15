@@ -24,7 +24,9 @@ import javax.persistence.UniqueConstraint;
 @AllArgsConstructor
 @EqualsAndHashCode
 @Entity
+
 @Table(
+        name="\"account\"",
     uniqueConstraints = @UniqueConstraint(columnNames={"name", "email"})
 )
 @Inheritance(strategy = InheritanceType.JOINED)

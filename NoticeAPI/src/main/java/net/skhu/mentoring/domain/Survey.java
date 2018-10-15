@@ -5,13 +5,7 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 import net.skhu.mentoring.enumeration.SurveyType;
 
-import javax.persistence.Column;
-import javax.persistence.Entity;
-import javax.persistence.EnumType;
-import javax.persistence.Enumerated;
-import javax.persistence.GeneratedValue;
-import javax.persistence.GenerationType;
-import javax.persistence.Id;
+import javax.persistence.*;
 import java.io.Serializable;
 import java.time.LocalDateTime;
 
@@ -19,6 +13,7 @@ import java.time.LocalDateTime;
 @NoArgsConstructor
 @AllArgsConstructor
 @Entity
+@Table(name="\"survey\"")
 public class Survey implements Serializable {
     private static final long serialVersionUID = 1L;
 

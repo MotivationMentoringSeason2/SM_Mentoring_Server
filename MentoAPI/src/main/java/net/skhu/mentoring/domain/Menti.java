@@ -20,6 +20,7 @@ import java.io.Serializable;
 @AllArgsConstructor
 @Entity
 @Table(
+        name="\"menti\"",
         uniqueConstraints = @UniqueConstraint(columnNames={"userId", "teamId"})
 )
 public class Menti implements Serializable {

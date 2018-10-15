@@ -9,7 +9,7 @@ import java.util.Optional;
 
 @Repository
 public interface SemesterRepository extends JpaRepository<Semester, Long> {
-    @Query(value = "SELECT * FROM Semester WHERE NOW() BETWEEN startDate AND endDate", nativeQuery = true)
+    @Query(value = "SELECT * FROM semester WHERE NOW() BETWEEN startDate AND endDate", nativeQuery = true)
     Optional<Semester> findByCurrentSemester();
     Optional<Semester> findByName(String name);
 }

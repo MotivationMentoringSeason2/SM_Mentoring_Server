@@ -24,6 +24,7 @@ import java.time.LocalDateTime;
 @AllArgsConstructor
 @Entity
 @Table(
+        name="\"file\"",
     uniqueConstraints = @UniqueConstraint(columnNames={"fileName", "postId"})
 )
 public class File implements Serializable {

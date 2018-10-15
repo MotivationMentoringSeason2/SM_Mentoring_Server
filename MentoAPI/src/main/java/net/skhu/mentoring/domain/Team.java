@@ -26,6 +26,7 @@ import java.util.List;
 @AllArgsConstructor
 @Entity
 @Table(
+        name="\"team\"",
         uniqueConstraints = @UniqueConstraint(columnNames={"semesterId", "mento"})
 )
 public class Team implements Serializable {
