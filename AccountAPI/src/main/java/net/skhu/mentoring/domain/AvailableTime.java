@@ -13,7 +13,7 @@ import java.time.LocalTime;
 @NoArgsConstructor
 @AllArgsConstructor
 @Entity
-@Table(name="\"availableTime\"")
+@Table(name="\"availabletime\"")
 public class AvailableTime implements Serializable {
     private static final long serialVersionUID = 1L;
 

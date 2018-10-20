@@ -13,7 +13,7 @@ import java.time.LocalDateTime;
 @NoArgsConstructor
 @AllArgsConstructor
 @Entity
-@Table(name="\"shedule\"")
+@Table(name="\"schedule\"")
 public class Schedule implements Serializable {
     private static final long serialVersionUID = 1L;
 
